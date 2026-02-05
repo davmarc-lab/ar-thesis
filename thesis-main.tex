@@ -6,22 +6,21 @@
 \usepackage{shortcuts}
 \usepackage{acronym}
 
-\usepackage[italian]{babel}
-
 \school{\unibo}
 \programme{Corso di Laurea in Ingegneria e Scienze Informatiche}
 \title{Un sistema di realtà aumentata per la Robotica di sciame}
 \author{Marhcetti Davide}
 \date{\today}
-\subject{OOP}
-\supervisor{Viroli Mirko}
-\cosupervisor{Aguzzi Gianluca}
+\subject{Programmazione ad oggetti}
+\supervisor{Mirko Viroli}
+\cosupervisor{Gianluca Aguzzi}
 \session{IV}
 \academicyear{2024-2025}
 
 % Definition of acronyms
 \acrodef{IoT}{Internet of Thing}
 \acrodef{vm}[VM]{Virtual Machine}
+\acrodef{js}[JS]{Java Script}
 
 \mainlinespacing{1.241} % line spacing in mainmatter, comment to default (1)
 
@@ -31,6 +30,7 @@
 
 \begin{abstract}	
 Max 2000 characters, strict.
+\ac{js}
 \end{abstract}
 
 \begin{dedication} % this is optional
@@ -46,8 +46,7 @@ Optional. Max a few lines.
 \mainmatter
 
 %----------------------------------------------------------------------------------------
-\chapter{Introduzione}
-\label{chap:introduzione}
+\chapter{Introduzione}\label{chap:introduzione}
 %----------------------------------------------------------------------------------------
 
 Write your intro here.
@@ -86,21 +85,33 @@ I suggest referencing stuff as follows: \cref{fig:random-image} or \Cref{fig:ran
 
 \section{Some cool topic}
 
-\chapter{Analisi}
-\label{chap:analisi} % (fold)
+\chapter{Analisi}\label{chap:analisi} % (fold)
+
+\section{Obiettivi}\label{sec:obiettivi} % (fold)
+
+% section Obiettivi (end)
+
+\section{Requisiti}\label{sec:requisiti} % (fold)
+
+% section Requisiti (end)
 
 % chapter Analisi (end)
 
-You may also put some code snippet (which is NOT float by default), eg: \cref{lst:random-code}.
+\chapter{Progettazione}\label{chap:progettazione} % (fold)
 
-\lstinputlisting[float,language=Java,label={lst:random-code}]{listings/HelloWorld.java}
+\section{WebXR}\label{sec:webxr} % (fold)
 
-\section{Fancy formulas here}
+% section WebXR (end)
 
-\chapter{Design}
-\label{chap:design} % (fold)
+\section{Riconoscimento}\label{sec:riconoscimento} % (fold)
 
-% chapter Design (end)
+% section Riconoscimento (end)
+
+\section{Arena virtuale}\label{sec:arena_virtuale} % (fold)
+
+% section Arena virtuale (end)
+
+% chapter Progettazione (end)
 
 \chapter{Implementazione}
 \label{chap:implementazione} % (fold)
