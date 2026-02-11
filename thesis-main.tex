@@ -9,7 +9,7 @@
 \school{\unibo}
 \programme{Corso di Laurea in Ingegneria e Scienze Informatiche}
 \title{Un sistema di realtà aumentata per la Robotica di sciame}
-\author{Marhcetti Davide}
+\author{Marchetti Davide}
 \date{\today}
 \subject{Programmazione ad oggetti}
 \supervisor{Mirko Viroli}
@@ -20,7 +20,12 @@
 % Definition of acronyms
 \acrodef{IoT}{Internet of Thing}
 \acrodef{vm}[VM]{Virtual Machine}
+
 \acrodef{js}[JS]{Java Script}
+\acrodef{AR}[AR]{Realtà Aumentata}
+\acrodef{VR}[VR]{Realtà Virtuale}
+
+\acrodef{mqtt}[MQTT]{Message Queuing Telemetry Transport}
 
 \mainlinespacing{1.241} % line spacing in mainmatter, comment to default (1)
 
@@ -65,47 +70,140 @@ For instance,
 that you are discussing \acp{vm},
 you may need both \ac{vm} and \acp{vm}.
 
-\paragraph{Structure of the Thesis}
+\paragraph{Struttura della tesi}
 
 \note{At the end, describe the structure of the paper}
 
-\chapter{Background}
-\label{chap:background} % (fold)
+\chapter{Background}\label{chap:background} % (fold)
 
-% chapter Background (end)
+\section{Project Emerge}\label{sec:project_emerge} % (fold)
 
-I suggest referencing stuff as follows: \cref{fig:random-image} or \Cref{fig:random-image}
+% section Project Emerge (end)
 
+\section{Realtà aumentata}\label{sec:realta_aumentata} % (fold)
+
+% section Realtà aumentata (end)
+
+\section{ThreeJS}\label{sec:threejs} % (fold)
+ThreeJS è una libreria in JavaScript progettata per semplificare lo sviluppo di applicazioni di grafica tridimensionale in ambienti web. Si basa su WebGL, un’API a basso livello che consente l’accesso diretto alle funzionalità della GPU attraverso il browser.
+L’utilizzo diretto di WebGL richiede una conoscenza approfondita della pipeline grafica e della programmazione tramite shader, per questo motivo ThreeJS introduce un livello di astrazione che consente di sviluppare scene tridimensionali complesse riducendo la complessità implementativa, pur mantenendo un elevato grado di flessibilità.
+\\
+%
+L’architettura di ThreeJS riflette i principali concetti della grafica computazionale tridimensionale e si basa su tre componenti fondamentali: scena, telecamera e \rd.
+\\
+Una scena contiene tutti gli oggetti tridimensionali, le sorgenti luminose e gli elementi di supporto. La telecamera definisce il punto di vista dell’osservatore e può essere di tipo prospettico o ortografico, influenzando il modello di proiezione della scena sul piano di visualizzazione.
+\\
+Il \rd, generalmente \texttt{WebGLRenderer}, si occupa di eseguire la pipeline di \rding{} sfruttando le funzionalità offerte da WebGL.
+%
+Gli oggetti rappresentati in una scena, chiamati \textit{mesh}, sono costituiti da due componenti principali:
+\begin{itemize}
+    \item \textbf{Geometria}: descrive la struttura dei vertici, delle normali e delle coordinate texture
+    \item \textbf{Materiale}: definisce le proprietà visive dell’oggetto, texture e il suo comportamento rispetto alle sorgenti luminose
+\end{itemize}
+% \\
+% Le geometrie , mentre i materiali . ThreeJS mette a disposizione diversi modelli di shading, includendo sia approcci tradizionali sia modelli basati sul Physically Based Rendering (PBR).
+%
+\lstinputlisting[language=JavaScript,caption={Esempio di una scena 3D con ThreeJS},label={lst:sample-threejs}]{listings/Threejs.js}
+%
+Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard WebXR, un’API che consente la realizzazione di applicazioni di \acl{VR} e \acl{AR} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’API WebXR.
+%
+Attraverso l’utilizzo di componenti dedicati, è possibile creare ambienti immersivi tridimensionali in cui la scena viene renderizzata in modo stereoscopico e aggiornata in funzione dei movimenti dell’utente. L’integrazione con WebXR permette inoltre di gestire input avanzati, come controller e sistemi di tracciamento, rendendo ThreeJS uno strumento efficace per lo sviluppo di applicazioni immersive a scopo didattico, simulativo o sperimentale.
+%
+% section ThreeJS (end)
+%
+\section{MQTT}\label{sec:mqtt} % (fold)
+%
+Il \acf{mqtt} è un protocollo di comunicazione, divenuto standard OASIS \cite{std-mqtt-5}, basato sul paradigma \textit{publish-subscribe} con l'ausilio di un protocollo di trasporto bidirezionale e affidabile.
+Progettato per facilitare la comunicazione all'interno di reti instabili o tra dispositivi che utilizzano un numero limitato di risorse.
+In questo modello sono necessari tre componenti principali, come mostrato in \Cref{fig:back-mqtt-comm}:
+\begin{itemize}
+    \item \textbf{broker}: nodo centrale con il compito di distribuire i messaggi
+    \item \textbf{publisher}: dispositivo o applicazione che pubblica messaggi
+    \item \textbf{subscriber}: dispositivo o applicazione che riceve messaggi
+\end{itemize}
+%
 \begin{figure}
     \centering
-    \includegraphics[width=.8\linewidth]{figures/random-image.pdf}
-    \caption{Some random image}
-    \label{fig:random-image}
+    \includegraphics[width=1\linewidth]{./figures/back-mqtt.png}
+    \caption{Esempio di comunicazione con \acs{mqtt}}
+    \label{fig:back-mqtt-comm}
 \end{figure}
+%
+Più nello specifico, ogni messaggio inviato e ricevuto viene organizzato in stringhe gerarchiche, chiamate \textit{topic}. Ogni publisher pubblica un messagio in un topic e un subscriber riceve i messaggi dai topic a cui viene sottoscritto.
+L'operazione di filtraggio dei messaggi nei relativi topic viene svolta dal \textit{broker}.
+\\
+L'architettura di \acs{mqtt} introduce diversi disaccoppiamenti tra mittenti e destinatari:
+\begin{itemize}
+    \item \textbf{Disaccoppiamento spaziale}: ogni publisher non ha la necessità di conoscere ogni subscriber (e viceversa), ognuno di essi comunica esclusivamente con il \textit{broker}
+    \item \textbf{Disaccoppiamento temporale}: un publisher e un subscriber non hanno la necessità di essere attivi simultaneamente per poter comunicare
+    \item \textbf{Disaccoppiamento di sincronizzazione}: le operazioni di invio e ricezione di messaggi non sono processi che interrompono il flusso di esecuzione 
+\end{itemize}
+%
+Tipicamente \acs{mqtt} instaura un canale di comunicazione bidirezionale sfruttando il protocollo \textit{TCP/IP}, il quale garantisce affidabilità e robustezza del canale, ma soprattutto l'ordine dei messaggi inviati rimane invariato in ricezione.
+%
+% section MQTT (end)
 
-\section{Some cool topic}
+% chapter Background (end)
 
 \chapter{Analisi}\label{chap:analisi} % (fold)
 
 \section{Obiettivi}\label{sec:obiettivi} % (fold)
-
+%
+Questa tesi si pone l'obiettivo di realizzare un'applicazione web che permetta di trasformare il sistema emulato, utilizzato nella notte dei ricercatori, in una scena in realtà aumentata sfruttando un dispositivo dotato di una fotocamera.
+L'applicativo deve inizialmente calibrare l'arena virtuale da realizzare, sfruttando la telecamera del dispositivo e quattro marker ArUco posizionati nel mondo reale.
+Una volta individuati e calcolato una sitma della loro posizione all'interno di una scena 3D, sevono essere disegnati ogni robot emulato dal sistema, all'interno dell'arena virtuale. Le informazioni relative alla posizione ed orientamento di ogni elemento vengono pubblicati dall'emulatore in un \textit{topic} \acs{mqtt}.
+%
 % section Obiettivi (end)
 
 \section{Requisiti}\label{sec:requisiti} % (fold)
-
+%
+\begin{itemize}
+    \item Ricerca dei marker ArUco presenti nell'inquadratura della telecamera fisica
+    \item Creazione di un arena virtuale in una scena 3D, sovrapposta ai marker posizionati nel mondo reale
+    \item Rappresentazione dei robot emulati nella scena in realtà aumentata ricevendo tutte le informazioni necessarie dal broker \acs{mqtt}
+\end{itemize}
+%
 % section Requisiti (end)
+
+\section{Modello}\label{sec:modello} % (fold)
+
+\subsection{WebXR e HTTPS}\label{sub:webxr_e_https} % (fold)
+
+% subsection WebXR e HTTPS (end)
+
+\subsection{Broker MQTT}\label{sub:broker_mqtt} % (fold)
+
+% subsection Broker MQTT (end)
+
+\subsection{Arena simulata}\label{sub:arena_simulata} % (fold)
+
+% subsection Arena simulata (end)
+
+% section Modello (end)
 
 % chapter Analisi (end)
 
 \chapter{Progettazione}\label{chap:progettazione} % (fold)
-
-\section{WebXR}\label{sec:webxr} % (fold)
-
-% section WebXR (end)
-
-\section{Riconoscimento}\label{sec:riconoscimento} % (fold)
-
-% section Riconoscimento (end)
+%
+\section{ThreeJS e WebXR}\label{sec:threejs_e_webxr} % (fold)
+%
+La realizzazione di una scena in realtà aumentata con l'ausilio di ThreeJS è molto immediato, in quanto la libreria ha integrato il supporto con WebXR per la maggior parte delle funzionalità.
+Le due librerie coesistono elaborando i dati in contemporanea: ThreeJS si occupa di renderizzare tutti gli elementi della scena e l'immagine della fotocamera ad ogni frame, mentre WebXR gestisce il dispositivo XR utilizzato ed eventuali controller.
+\\
+Tuttavia, WebXR categorizza l'immagine delle telacamera, ed altre informazioni non rilevanti in questa tesi, come contenuto sensibile. Perciò per poter avviare una qualsiasi sessione in realtà aumentata (o virtuale), è necessario che l'utente dia il consenso all'utilizzo della telecamera.
+%
+Inoltre è possibile ottenere l'immagine stessa durante una sessione XR, utilizzando il modulo aggiuntivo \textit{WebXR Raw Camera Access Module} \cite{webxr_raw_camera}.
+Grazie a questo modulo si ha la possibilità di ottenere una texture, nel contesto di WebGL, rappresentante l'immagine della fotocamera in uno specifico \texttt{XRFrame}, durante l'esecuzione di una \texttt{XRSession}.
+%
+% section ThreeJS e WebXR (end)
+%
+\section{Marker Detection e Pose Estimation}\label{sec:marker_detection_e_pose_estimation} % (fold)
+%
+Per ricercare all'interno di un'immagine i marker ArUco viene utilizzata la libreria js-aruco \cite{js_aruco2}.
+Questa l'ibreria analizza i dati di un immagine e attraverso algoritmi e tecniche di Visione Artificiale, calcola la posizione all'interno dell'immagine dei marker ArUco di un dizionario specifico.
+Inoltre offre delle tecniche per stimare la posizione dei marker in uno spazio tridimensionale.
+%
+% section Marker Detection e Pose Estimation (end)
 
 \section{Arena virtuale}\label{sec:arena_virtuale} % (fold)
 
@@ -113,8 +211,43 @@ I suggest referencing stuff as follows: \cref{fig:random-image} or \Cref{fig:ran
 
 % chapter Progettazione (end)
 
-\chapter{Implementazione}
-\label{chap:implementazione} % (fold)
+\chapter{Implementazione}\label{chap:implementazione} % (fold)
+
+\section{ThreeJS e WebXR}\label{sec:threejs_e_webxr} % (fold)
+
+\subsection{Integrazione di una telecamera}\label{sub:integrazione_di_una_telecamera} % (fold)
+
+% subsection Integrazione di una telecamera (end)
+
+% section ThreeJS e WebXR (end)
+
+\section{Marker Detection e Pose Estimation}\label{sec:marker_detection_e_pose_estimation} % (fold)
+
+\subsection{Ricerca dei marker}\label{sub:ricerca_dei_marker} % (fold)
+
+% subsection Ricerca dei marker (end)
+
+\subsection{Stima delle posizioni}\label{sub:stima_delle_posizioni} % (fold)
+
+% subsection Stima delle posizioni (end)
+
+% section Marker Detection e Pose Estimation (end)
+
+\section{Arena Virtuale}\label{sec:arena_virtuale} % (fold)
+
+\subsection{Calibrazione dell'arena}\label{sub:calibrazione_dell_arena} % (fold)
+
+% subsection Calibrazione dell'arena (end)
+
+\subsection{Comunicazione con il broker}\label{sub:comunicazione_con_il_broker} % (fold)
+
+% subsection Comunicazione con il broker (end)
+
+\subsection{Posizionamento e orientamento}\label{sub:posizionamento_e_orientamento} % (fold)
+
+% subsection Posizionamento e orientamento (end)
+
+% section Arena Virtuale (end)
 
 % chapter Implementazione (end)
 
