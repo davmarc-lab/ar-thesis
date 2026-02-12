@@ -111,7 +111,7 @@ Attraverso l’utilizzo di componenti dedicati, è possibile creare ambienti imm
 %
 % section ThreeJS (end)
 %
-\section{MQTT}\label{sec:mqtt} % (fold)
+\section{MQTT}\label{sec:sec_mqtt} % (fold)
 %
 Il \acf{mqtt} è un protocollo di comunicazione, divenuto standard OASIS \cite{std-mqtt-5}, basato sul paradigma \textit{publish-subscribe} con l'ausilio di un protocollo di trasporto bidirezionale e affidabile.
 Progettato per facilitare la comunicazione all'interno di reti instabili o tra dispositivi che utilizzano un numero limitato di risorse.
@@ -160,7 +160,7 @@ Una volta individuati e calcolato una sitma della loro posizione all'interno di 
 \begin{itemize}
     \item Ricerca dei marker ArUco presenti nell'inquadratura della telecamera fisica
     \item Creazione di un arena virtuale in una scena 3D, sovrapposta ai marker posizionati nel mondo reale
-    \item Rappresentazione dei robot emulati nella scena in realtà aumentata ricevendo tutte le informazioni necessarie dal broker \acs{mqtt}
+    \item Rappresentazione dei robot emulati nella scena in realtà aumentata ricevendo tutte le informazioni necessarie dal broker \ac{mqtt}
 \end{itemize}
 %
 % section Requisiti (end)
@@ -202,44 +202,122 @@ Grazie a questo modulo si ha la possibilità di ottenere una texture, nel contes
 Per ricercare all'interno di un'immagine i marker ArUco viene utilizzata la libreria js-aruco \cite{js_aruco2}.
 Questa l'ibreria analizza i dati di un immagine e attraverso algoritmi e tecniche di Visione Artificiale, calcola la posizione all'interno dell'immagine dei marker ArUco di un dizionario specifico.
 Inoltre offre delle tecniche per stimare la posizione dei marker in uno spazio tridimensionale.
+\\
+Nel flusso esecutivo il riconoscimento, essendo una parte molto onerosa, non viene eseguito ad ogni iterazione del \textit{loop} principale, ma viene eseguita soltanto dopo un determinato numero di \textit{frame} dall'ultima esecuzione.
+Ciò garantisce la fluidità dell'applicativo in fase di calibrazione, ma porta a non avere un tracking immediato dei marker presenti.
 %
 % section Marker Detection e Pose Estimation (end)
-
+%
 \section{Arena virtuale}\label{sec:arena_virtuale} % (fold)
+%
+Per creare e calibrare un'arena virturale, è necessario definire quali sono i limiti dell'arena stessa. Questi limiti sono i \texttt{Corner}, la cui posizione nella scena virtuale viene definita dai marker ArUco ricercati nella fase precedente.
+Ogni \texttt{Corner} necessita dei seguenti parametri:
+\begin{itemize}
+    \item \texttt{position}: indica la posizione nella scena 3D
+    \item \texttt{rotation}: indica la rotazione nella scena 3D, dovuta dalla distorsione dell'immagine
+    \item \texttt{location}: indica quale angolo dell'arena rappresenta (per esempio l'angolo in alto a destra, oppure in basso a sinistra)
+\end{itemize}
+Un'arena per essere consistente, deve presentare quattro \texttt{Corner} onugno dei quali rappresenta una \texttt{Location} specifica.
+\newpage
+\begin{figure}
+    \centering
+    \includegraphics[width=0.3\linewidth]{./figures/diag-corner.png}
+    \caption{Diagramma delle classi di un \texttt{Corner}}
+    \label{fig:diag-corner}
+\end{figure}
+Le \texttt{Location} sono indispensabili per il calcolo degli assi relativi dell'arena stessa. Questi ultimi vengono utilizzati per poter posizionare i robot all'interno a partire dall'origine dell'arena.
+%
+\subsection{Calibrazione dell'arena}\label{sub:calibrazione_dell_arena} % (fold)
+Una volta aver ottenuto un'arena valida, bisogna effettuare delle opportune operazioni per poter permettere il posizionamento di robot all'interno dell'area delimitata.
+In particolare, il simulatore invia le posizioni dei robot relative all'origine dell'ambiente simulato $(0, 0, 0)$, tuttavia la posizione dell'origine dell'arena raramente corrisponde a quella del sistema emulato. Perciò le posizioni ricevute, relative all'origine della scena emulata, vengono trasformate in posizioni relative al nuovo sistema di coordinate.
+\newpage
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\linewidth]{./figures/diag-arena-origin.png}
+    \caption{Diagramma delle classi parziale: \texttt{Arena} e l'origine}
+    \label{fig:diag-arena-origin}
+\end{figure}
+%
+Viene considerato il punto centrale del poligono definito dai quattro angoli dell'arena, come origine del nuovo sistema di coordinate.
+In matematica, quest'utlimo è chiamato centroide (centro geometrico o centro della figura): si ottiene calcolando la media aritmetica della posizioni dei punti di una figura piana o solida.
+$$
+C = \frac{1}{n}\sum_{i = 0}^{n}{x_i}
+$$
+%
+Il punto trovato corrisponde al punto $(0, 0)$ nel sistema di coordinate dell'emulatore.
+%
+\subsubsection{Calcolo degli assi di riferimento}\label{sec:calcolo_degli_assi_di_riferimento} % (fold)
+Per permettere la traslazione dei robot nel nuovo sistema di riferimento, bisogna definire un'asse orizzontale ed uno verticale, entrambi relativi all'arena.
+Qui entra in gioco la \texttt{Location} di ogni \texttt{Corner}: data la posizione di due \texttt{Corner}, il vettore normalizzato della differenza fra le posizioni definisce un asse dell'arena.
+Per l'asse verticale si prendono in considerazione due angoli che si trovano entrambi a destra o a sinistra (ad esempio \texttt{TOP\_LEFT} e \texttt{BOT\_LEFT}, o viceversa). Il vettore risultante avrà il verso che punta all'angolo superiore.
+Mentre per l'asse orizzontale si prendono in considerazione due corner che si trovano, idealmente, sullaparte inferiore oppure sulla parte superiore (ad esempio \texttt{TOP\_LEFT} e \texttt{TOP\_RIGHT}).
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\linewidth]{./figures/diag-arena-axes.png}
+    \caption{Diagramma delle classi parziale: \texttt{Arena} e \texttt{ArenaAxes}}
+    \label{fig:diag-arena-axes}
+\end{figure}
+%
+% subsubsection Calcolo degli assi di riferimento (end)
+
+% subsection Calibrazione dell'arena (end)
 
 % section Arena virtuale (end)
 
 % chapter Progettazione (end)
 
 \chapter{Implementazione}\label{chap:implementazione} % (fold)
-
-\section{ThreeJS e WebXR}\label{sec:threejs_e_webxr} % (fold)
-
-\subsection{Integrazione di una telecamera}\label{sub:integrazione_di_una_telecamera} % (fold)
-
+Il flusso di esecuzione dell'applicazione è il seguente:
+\begin{enumerate}
+    \item Inizializzazione della scena 3D e del supporto con WebXR, stabilisce una connessione con il broker \acs{mqtt} ed inizializza il detector per i marker ArUco con l'opportuno dizionario
+    \item Nel momento in cui l'utente inizia la sessione in realtà aumentata, attraverso l'apposito pulsante, viene definito il loop di esecuzione con le seguenti fasi:
+    \begin{itemize}
+        \item \texttt{update}, esegue la ricerca dei marker ed eventualmente inizializza un'arena virtuale
+        \item \texttt{render}, disegna l'intera scena sullo schermo
+    \end{itemize}
+\end{enumerate}
+%
+\section{ThreeJS e WebXR}\label{sec:impl_threejs_e_webxr} % (fold)
+\subsection{Integrazione di una telecamera}\label{sub:impl_integrazione_di_una_telecamera} % (fold)
+Per integrare la telecamera del dispositivo all'interno di una scena ThreeJS, è necessario aver inizializzato il \rd, successivamente bisogna abilitare il componente \texttt{xr} all'interno del \rd{} stesso.
+%
+\lstinputlisting[language=JavaScript,caption={Inizializzazione della scena 3D con il supporto per WebXR},label={lst:init-scene-camera}]{./listings/ar-session.js}
+Da notare l'utilizzo della feature \texttt{camera-access}, fornita dal modulo \textit{WebXR Raw Camera Access Module} \cite{webxr_raw_camera}, per poter ottenere la texture della fotocamera attreverso specifiche operazioni.
+%
 % subsection Integrazione di una telecamera (end)
 
 % section ThreeJS e WebXR (end)
 
-\section{Marker Detection e Pose Estimation}\label{sec:marker_detection_e_pose_estimation} % (fold)
+\section{Marker Detection e Pose Estimation}\label{sec:impl_marker_detection_e_pose_estimation} % (fold)
 
-\subsection{Ricerca dei marker}\label{sub:ricerca_dei_marker} % (fold)
-
+\subsection{Ricerca dei marker}\label{sub:impl_ricerca_dei_marker} % (fold)
+La libreria utilizzata, \textit{js-aruco2} \cite{js_aruco2}, fornisce i metodi necessari per effettuare la ricerca di marker ArUco appartenenti ad un dizionario specifico, partendo da un'immagine (solitamente ottenuta da un \texttt{canvas}).
+%
+\lstinputlisting[language=JavaScript,caption={Inizializzazione della scena 3D con il supporto per WebXR},label={lst:init-scene-camera}]{./listings/get-camera-image.js}
+%
+In questo caso non è possibile ottenere l'immagine della fotocamera in maniera diretta \cite{webxr_raw_camera}.
+Grazie alla feature \texttt{camera-access}, è possibile ottenere una texture, contenente l'immagine della fotocamera, in un formato non elaborabile lato CPU (\texttt{WebGLTexture}).
+Tuttavia è possibile utilizzare questo specifico formato come sfondo di una scena. Per questo motivo, viene utilizzata una scena ausiliaria con lo scopo di renderizzare la texture ottenuta, per poi effettuare uno snapshot dello stato attuale della scena. Così facendo è possibile realizzare un immagine elaborabile da \textit{js-aruco2}.
+\lstinputlisting[language=JavaScript,caption={Inizializzazione della scena 3D con il supporto per WebXR},label={lst:init-scene-camera}]{./listings/scene-snapshot.js}
+%
+Una volta ottenuta un'immagine.
+La ricerca dei marker viene eseguita dopo un numero di \texttt{frame} del \rd.
+\lstinputlisting[language=JavaScript,caption={Inizializzazione della scena 3D con il supporto per WebXR},label={lst:init-scene-camera}]{./listings/find-markers.js}
 % subsection Ricerca dei marker (end)
 
-\subsection{Stima delle posizioni}\label{sub:stima_delle_posizioni} % (fold)
+\subsection{Stima delle posizioni}\label{sub:impl_stima_delle_posizioni} % (fold)
 
 % subsection Stima delle posizioni (end)
 
 % section Marker Detection e Pose Estimation (end)
 
-\section{Arena Virtuale}\label{sec:arena_virtuale} % (fold)
+\section{Arena Virtuale}\label{sec:impl_arena_virtuale} % (fold)
 
-\subsection{Calibrazione dell'arena}\label{sub:calibrazione_dell_arena} % (fold)
+\subsection{Calibrazione dell'arena}\label{sub:impl_calibrazione_dell_arena} % (fold)
 
 % subsection Calibrazione dell'arena (end)
 
-\subsection{Comunicazione con il broker}\label{sub:comunicazione_con_il_broker} % (fold)
+\subsection{Comunicazione con il broker}\label{sub:impl_comunicazione_con_il_broker} % (fold)
 
 % subsection Comunicazione con il broker (end)
 
@@ -251,13 +329,11 @@ Inoltre offre delle tecniche per stimare la posizione dei marker in uno spazio t
 
 % chapter Implementazione (end)
 
-\chapter{Valutazione}
-\label{chap:valutazione} % (fold)
+\chapter{Valutazione}\label{chap:valutazione} % (fold)
 
 % chapter Valutazione (end)
 
-\chapter{Conclusioni e lavori futuri}
-\label{chap:conclusioni_e_lavori_futuri} % (fold)
+\chapter{Conclusioni e lavori futuri}\label{chap:conclusioni_e_lavori_futuri} % (fold)
 
 % chapter Conclusioni e lavori futuri (end)
 
