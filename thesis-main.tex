@@ -122,7 +122,7 @@ In questo modello sono necessari tre componenti principali, come mostrato in \Cr
     \item \textbf{subscriber}: dispositivo o applicazione che riceve messaggi
 \end{itemize}
 %
-\begin{figure}
+\begin{figure}[htp]
     \centering
     \includegraphics[width=1\linewidth]{./figures/back-mqtt.png}
     \caption{Esempio di comunicazione con \acs{mqtt}}
@@ -199,12 +199,26 @@ Grazie a questo modulo si ha la possibilità di ottenere una texture, nel contes
 %
 \section{Marker Detection e Pose Estimation}\label{sec:marker_detection_e_pose_estimation} % (fold)
 %
-Per ricercare all'interno di un'immagine i marker ArUco viene utilizzata la libreria js-aruco \cite{js_aruco2}.
-Questa l'ibreria analizza i dati di un immagine e attraverso algoritmi e tecniche di Visione Artificiale, calcola la posizione all'interno dell'immagine dei marker ArUco di un dizionario specifico.
+Per ricercare all'interno di un'immagine i marker ArUco viene utilizzata la libreria \textit{js-aruco} \cite{js_aruco2}.
+Questa l'ibreria analizza i dati di un immagine e attraverso algoritmi e tecniche di Visione Artificiale, ricerca la posizione dei marker ArUco di un dizionario specifico.
 Inoltre offre delle tecniche per stimare la posizione dei marker in uno spazio tridimensionale.
 \\
-Nel flusso esecutivo il riconoscimento, essendo una parte molto onerosa, non viene eseguito ad ogni iterazione del \textit{loop} principale, ma viene eseguita soltanto dopo un determinato numero di \textit{frame} dall'ultima esecuzione.
+Nel flusso esecutivo il riconoscimento, essendo una parte molto onerosa, non viene eseguito ad ogni iterazione del \textit{loop} principale, ma viene eseguita soltanto dopo un determinato numero di \textit{frame} dall'ultima esecuzione se l'arena non è stata gia calibrata.
 Ciò garantisce la fluidità dell'applicativo in fase di calibrazione, ma porta a non avere un tracking immediato dei marker presenti.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=.4\linewidth]{./figures/diag-marker.png}
+    \caption{Diagramma delle classi della classe \texttt{Marker}}
+    \label{fig:diag-marker}
+\end{figure}
+Viene utilizzata una classe di supporto, chiamata \texttt{Marker}, per tenere traccia di tutti i marker trovati e le loro informazioni relative alla \texttt{pose}. La \texttt{pose} è un oggetto, generato dalla libreria \textit{posit2} integrata con \textit{js-aruco2}, contenente i seguenti parametri:
+\begin{itemize}
+    \item \textbf{error}: un valore relativo all'errore stimato del risultato
+    \item \textbf{translation}: un vettore di traslazione 3D
+    \item \textbf{rotation}: una matrice di rotazione, di dimensione $3 \times 3$
+\end{itemize}
+\texttt{Posit}, quando utilizzata, genera due possibili \texttt{pose}: una chiamata \texttt{bestPose}, avente il valore dell'errore inferiore, ed una saconda chiamata \texttt{alternativePose}, avente un errore maggiore.
+La classe \texttt{Marker} è stata predisposta per fornire entrambe le possibili \texttt{pose}; nella soluzione implementata verrà utilizzata soltanto la migliore.
 %
 % section Marker Detection e Pose Estimation (end)
 %
@@ -217,21 +231,19 @@ Ogni \texttt{Corner} necessita dei seguenti parametri:
     \item \texttt{rotation}: indica la rotazione nella scena 3D, dovuta dalla distorsione dell'immagine
     \item \texttt{location}: indica quale angolo dell'arena rappresenta (per esempio l'angolo in alto a destra, oppure in basso a sinistra)
 \end{itemize}
-Un'arena per essere consistente, deve presentare quattro \texttt{Corner} onugno dei quali rappresenta una \texttt{Location} specifica.
-\newpage
-\begin{figure}
+\begin{figure}[htp]
     \centering
     \includegraphics[width=0.3\linewidth]{./figures/diag-corner.png}
     \caption{Diagramma delle classi di un \texttt{Corner}}
     \label{fig:diag-corner}
 \end{figure}
+Un'arena per essere consistente, deve presentare quattro \texttt{Corner} onugno dei quali rappresenta una \texttt{Location} specifica.
 Le \texttt{Location} sono indispensabili per il calcolo degli assi relativi dell'arena stessa. Questi ultimi vengono utilizzati per poter posizionare i robot all'interno a partire dall'origine dell'arena.
 %
 \subsection{Calibrazione dell'arena}\label{sub:calibrazione_dell_arena} % (fold)
 Una volta aver ottenuto un'arena valida, bisogna effettuare delle opportune operazioni per poter permettere il posizionamento di robot all'interno dell'area delimitata.
 In particolare, il simulatore invia le posizioni dei robot relative all'origine dell'ambiente simulato $(0, 0, 0)$, tuttavia la posizione dell'origine dell'arena raramente corrisponde a quella del sistema emulato. Perciò le posizioni ricevute, relative all'origine della scena emulata, vengono trasformate in posizioni relative al nuovo sistema di coordinate.
-\newpage
-\begin{figure}
+\begin{figure}[htp]
     \centering
     \includegraphics[width=0.4\linewidth]{./figures/diag-arena-origin.png}
     \caption{Diagramma delle classi parziale: \texttt{Arena} e l'origine}
@@ -251,7 +263,7 @@ Per permettere la traslazione dei robot nel nuovo sistema di riferimento, bisogn
 Qui entra in gioco la \texttt{Location} di ogni \texttt{Corner}: data la posizione di due \texttt{Corner}, il vettore normalizzato della differenza fra le posizioni definisce un asse dell'arena.
 Per l'asse verticale si prendono in considerazione due angoli che si trovano entrambi a destra o a sinistra (ad esempio \texttt{TOP\_LEFT} e \texttt{BOT\_LEFT}, o viceversa). Il vettore risultante avrà il verso che punta all'angolo superiore.
 Mentre per l'asse orizzontale si prendono in considerazione due corner che si trovano, idealmente, sullaparte inferiore oppure sulla parte superiore (ad esempio \texttt{TOP\_LEFT} e \texttt{TOP\_RIGHT}).
-\begin{figure}
+\begin{figure}[htp]
     \centering
     \includegraphics[width=0.4\linewidth]{./figures/diag-arena-axes.png}
     \caption{Diagramma delle classi parziale: \texttt{Arena} e \texttt{ArenaAxes}}
@@ -259,9 +271,41 @@ Mentre per l'asse orizzontale si prendono in considerazione due corner che si tr
 \end{figure}
 %
 % subsubsection Calcolo degli assi di riferimento (end)
-
+%
 % subsection Calibrazione dell'arena (end)
+%
+\subsection{Comunicazione con il broker MQTT}\label{sub:comunicazione_con_il_broker_mqtt} % (fold)
+%
+La comunicazione con un broker \ac{mqtt} deve avvenire utilizzando una connessione sicura, in quanto il contesto dell'applicazione è sviluppato con il protocollo \textit{HTTPS}; per questo motivo il broker deve poter stabilere connessioni \textit{TLS}.
+Soltanto in un ambiente sicuro, il \textit{browser} utilizzato potrà permettere la comunicazione con quest'ultimo.
+Per implementare il client \ac{mqtt} viene utilizzata la libreria \textit{mqtt.js} \cite{mqttjs}, permette di configurare e gestire una connessione ad un broker \ac{mqtt}.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.4\linewidth]{./figures/diag-mqtt-client.png}
+    \caption{Diagramma delle classi del \texttt{MQTTClient}}
+    \label{fig:diag-mqtt-client}
+\end{figure}
+Viene implementata la classe \texttt{MQTTClient}, che permette di connettersi ad un broker, sottoscriversi ai topic, ed eseguire delle operazioni specifiche quando un messaggio viene ricevuto.
+%
+% subsection Comunicazione con il broker MQTT (end)
 
+\subsection{Posizionamento e orientamento dei robot}\label{sub:posizionamento_e_orientamento_dei_robot} % (fold)
+Il posizionamento dell'arena virtuale non è sempre lo stesso, perciò non è possibile definire un posizionamento statico dei \texttt{Robot}.
+A causa del posizionamento dinamico si ha la necessità di posizionare arbitrariamente la \textit{mesh}. In particolare la base della mesh, contenente le route dei robot, deve essere posizionata sul piano virtuale dell'arena.
+Geometricamente vettore normale della base della mesh deve avere stessa direzione ma verso opposto al vettore normale del piano dell'arena.
+In questa soluzione viene proposto un orientamento sfruttando le matrici di trasformazione della \textit{mesh} e quella dell'arena: data la matrice di trasformazione iniziale $M_i$, si può dire che moltiplicando questa matrice per una matrice di rotazione $R$, si ottiene la matrice di trasformazione finale $M_f$.
+\[
+    M_f = M_i \cdot R
+\]
+In questo caso la matrice $M_i$ rappresenta la matrice di trasformazione della \textit{mesh}, mentre la matrice $M_f$ rappresenta quella dell'arena. Trovando la matrice $R$ è possibile applicare le opportune trasformazioni per orientare una \textit{mesh} nello spazio di coordinate del mondo.
+\[
+    R = M_f / M_i = M_f \cdot M_i^{-1}
+\]
+La matrice dell'arena viene ricavata utilizzando gli assi calcolati dopo la calibrazione, invece la matrice dei \texttt{Robot} viene definita in maniera statica. Analizzando la \textit{mesh} del robot, si determinano i vettori delle normali nello spazio di coordinate del mondo. In particolare bisogna definire il vettore normale della base, della parte frontale e del lato destro della \textit{mesh} (destro perchè viene utilizzato un sistema di coordinate che segue le regole della mano destra).
+\\
+Per quanto riguarda l'orientamento dei robot, viene utilizzato l'asse $y$ dell'arena come asse di rotazione, in modo da rispettare quello del simulatore. La rotazione, ogni volta che deve essere aggiornata, viene sommata o sottratta a quella corrente; in caso contrario si perderebbe la rotazione originale utilizzata per posizionare la mesh sull'arena.
+
+% subsection Posizionamento e orientamento dei robot (end)
 % section Arena virtuale (end)
 
 % chapter Progettazione (end)
@@ -306,23 +350,64 @@ La ricerca dei marker viene eseguita dopo un numero di \texttt{frame} del \rd.
 % subsection Ricerca dei marker (end)
 
 \subsection{Stima delle posizioni}\label{sub:impl_stima_delle_posizioni} % (fold)
-
+La stima delle posizioni viene calcolata sfruttando la libreria \textit{posit2}, fornita da \textit{js-aruco2}.
+La quale all'interno calibra una telecamera virtuale, conoscendo la larghezza dell'elemento \textit{HTML} dove viene renderizzata la scena e la grandezza dei marker ArUco reali, per poter trasformare le coordinate nello spazio dello schermo in coordinate della scena.
+Per poter ottenere dei risultati attendibili, è necessario centrare le coordinate 2D dei \textit{corner} trovati nella sezione \cref{sub:impl_ricerca_dei_marker}, all'interno del \textit{canvas}.
+%
+\lstinputlisting[language=JavaScript,caption={Stima delle posizioni dei marker in uno spazio 3D},label={lst:estimate-marker-pos}]{./listings/estimate-position.js}
+Vengono tracciati tutti i marker, con \texttt{Id} unico, che successivamente, dopo le opportune manipolazioni, verranno utilizzati per la creazione dell'arena virtuale.
+%
 % subsection Stima delle posizioni (end)
 
 % section Marker Detection e Pose Estimation (end)
 
 \section{Arena Virtuale}\label{sec:impl_arena_virtuale} % (fold)
-
+%
 \subsection{Calibrazione dell'arena}\label{sub:impl_calibrazione_dell_arena} % (fold)
-
+L'inizializzazione dell'arena avviene nel momento in cui sono stati tracciati esattamente quattro marker differenti. A questo punto si procede con il calcolo dell'origine e degli asssi di traslazione dell'arena.
+\subsubsection{Calcolo dell'origine}\label{sec:calcolo_dell_origine} % (fold)
+Per calcolare il centroide di una figura ad $n$ dimensioni, bisogna calcolare la media di ogni coordinata per ogni suo punto. In questo caso si hanno $3$ dimensioni, quindi si calcola la media delle coordinate $x$, la media delle coordinate $y$ e la media delle coordinate $z$ di ogni punto. Le medie ottenute rappresentano le coordinate tridimensionali del centroide della figura.
+%
+\lstinputlisting[language=JavaScript,caption={Calcolo del centroide di una serie di punti},label={lst:evaulate-arena-center}]{./listings/calc-centroid.js}
+%
+% subsubsection Calcolo dell'origine (end)
+%
+\subsubsection{Definizione degli assi}\label{sec:definizione_degli_assi} % (fold)
+Conoscendo gli \texttt{Id} dei marker tracciati, ognuno dei quali corrisponde ad un angolo della scena specifico (\texttt{Location}), è possibile ottenere gli assi di traslazione dell'arena creata.
+%
+\lstinputlisting[language=JavaScript,caption={Calcolo degli assi di traslazione dell'arena},label={lst:evaulate-arena-axes}]{./listings/calc-axes.js}
+%
+Si prendono due angoli, che nella realtà si troverebbero sullo stesso lato, e si calcola il vettore distanza fra loro:
+\[
+    dist = p_2 - p_1
+\]
+Il risultato ottenuto viene poi normalizzato, così da ottenere valori compresi nell'intervallo $\left[-1, 1\right]$ per facilitare le operazioni di traslazione e rotazione.
+Inoltre viene anche calcolato un terzo asse, calcolando il prodotto vettoriale tra i due assi calcolati in precedenza.
+\[
+    z = x \times y
+\]
+Quest'ultimo asse può essere considerato come il vettore normale della superficie dell'arena; in seguito verrà utilizzato per orientare correttamente la \textit{mesh} dei robot sulla superficie stessa.
+%
+% subsubsection Definizione degli assi (end)
+%
 % subsection Calibrazione dell'arena (end)
 
 \subsection{Comunicazione con il broker}\label{sub:impl_comunicazione_con_il_broker} % (fold)
-
+Nel momento in cui l'arena viene creata, viene definito il comportamento di un \texttt{MQTTClient} alla ricezione di ogni messaggio.
+In questo caso l'unico topic rilevante è quello delle posizioni dei robot (\texttt{robots/\{robotId\}/position}), perciò non è necessario filtrare i messaggi per topic (essendo iscritto soltanto ad uno).
+Ogni volta che viene ricevuto un messaggio, viene normalizzata la posizione ricevuta nelle coordinate dell'arena virtuale: come specificato in precedenza, l'arena simulata e l'arena virutale non solo hanno due sistem di coordinate differenti, ma la dimensione delle due arene è differente.
+Per questo motivo tutte le posizioni ricevute dal simulatore, vengono normalizzate con la seguente formula:
+$$
+        normPos = \left( \frac{x \cdot xSize}{simulatedSize}, \frac{y \cdot ySize}{simulatedSize}, z\right)
+$$
+Dove $xSize$ e $ySize$ rappresentano rispettivamente la metà della lunghezza di due lati dell'arena, mentre $simulatedSize$ è la dimensione del mondo dell'arena simulata.
+%
+\lstinputlisting[language=JavaScript,caption={Operazioni eseguite alla ricezione di ogni messaggio},label={lst:broker-message}]{./listings/broker-message.js}
+%
 % subsection Comunicazione con il broker (end)
 
 \subsection{Posizionamento e orientamento}\label{sub:posizionamento_e_orientamento} % (fold)
-
+\lstinputlisting[language=JavaScript,caption={Posizionamento della mesh sull'arena virtuale},label={lst:pose-robot}]{./listings/pose-robot.js}
 % subsection Posizionamento e orientamento (end)
 
 % section Arena Virtuale (end)

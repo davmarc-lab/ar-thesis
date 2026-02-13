@@ -12,7 +12,7 @@ import { Location, Corner, Arena, CASTER_SCALE } from './arena'
 
 import * as Utils from './sceneUtils'
 
-import { MQTTBroker, parseBrokerMessage } from './mqtt';
+import { MQTTClient, parseBrokerMessage } from './mqtt';
 
 function log(message) {
     fetch(`/log?${encodeURI(message)}`);
@@ -82,7 +82,7 @@ const opts = {
 }
 
 // create connection to the mqtt broker
-const broker = new MQTTBroker(url, opts);
+const broker = new MQTTClient(url, opts);
 broker.connect(publishers);
 
 const simWorldSize = 100;
