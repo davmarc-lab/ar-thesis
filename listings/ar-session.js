@@ -1,5 +1,5 @@
 // xr session features
-const reqFeats = ["unbounded", "camera-access"];
+const reqFeats = ["viewer", "camera-access"];
 ...
 async function init() {
     ...
