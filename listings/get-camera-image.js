@@ -25,7 +25,7 @@ function getCameraImage() {
     const view = viewPose.views.find(view => view.camera);
     if (!view)
         return;
-    // retrieve a flipped camera texture
+    // retrieve camera texture
     const camText = renderer.xr.getCameraTexture(view.camera);
     if (!camText)
         return;
@@ -34,12 +34,9 @@ function getCameraImage() {
     imageScene.background = camText;
     imageScene.background.needsUpdate = true;
 
-    // retrieve the current render buffer to restore after snapshot
-    const old = renderer.getRenderTarget();
     // creates an images by taking a screenshot of the renderer scene
     // using the given camera
     const imageData = Utils.snapshot(renderer, camera, imageScene);
-    renderer.setRenderTarget(old);
 
     return imageData;
 }
