@@ -8,7 +8,7 @@ class Arena {
         this.#origin = new THREE.Vector3(x, y, z);
         this.#isOriginOk = true;
 
-        this.arena.position.set(this.#origin.x, this.#origin.y, this.#origin.z);
+        this.#arena.position.set(this.#origin.x, this.#origin.y, this.#origin.z);
     }
 
     #calculateCentroid(points) {

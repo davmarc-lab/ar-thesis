@@ -1,11 +1,18 @@
+class Robot {
+    ...
+    setPosition(position) {
+        this.#mesh.position.copy(position);
+    }
+}
+
 class Arena {
     ...
     moveRobot(id, position) {
         // find the given robot
-        const robot = this.#robots.find(r => r.id === id);
+        const robot = this.#robots.find(r => r.getId() === id);
         if (robot) {
             // update robot position if it exists
-            robot.mesh.position.copy(this.#calcRelativePosition(position));
+            robot.setPosition(this.#calcRelativePosition(position));
         }
     }
 

@@ -22,12 +22,14 @@
 \acrodef{vm}[VM]{Virtual Machine}
 
 \acrodef{js}[JS]{Java Script}
-\acrodef{AR}[AR]{Realtà Aumentata}
-\acrodef{VR}[VR]{Realtà Virtuale}
+\acrodef{ar}[AR]{Realtà Aumentata}
+\acrodef{vr}[VR]{Realtà Virtuale}
 
 \acrodef{mqtt}[MQTT]{Message Queuing Telemetry Transport}
 
 \acrodef{wcs}[WCS]{Sistema di Coordinate del Mondo}
+
+\acrodef{slam}[SLAM]{Simultaneous Localization and Mapping}
 
 \mainlinespacing{1.241} % line spacing in mainmatter, comment to default (1)
 
@@ -83,7 +85,20 @@ you may need both \ac{vm} and \acp{vm}.
 % section Project Emerge (end)
 
 \section{Realtà aumentata}\label{sec:realta_aumentata} % (fold)
-
+La \acf{ar} è una tecnologia che permette di arricchire il mondo fisico con contenuti digitali, come immagini, informazioni testuali, modelli tridimensionali, integrati in tempo reale.
+A differenza della \acf{vr}, che immerge l’utente in uno spazio interamente simulato sostituendo la percezione dell’ambiente reale, l’\ac{ar} si caratterizza per la coesistenza tra mondo fisico e componenti digitali, preservando la continuità con lo spazio reale.
+Tale integrazione arricchisce l’esperienza percettiva senza interrompere l’interazione con l’ambiente circostante, permettendo di realizzare forme di interazione più naturali e contestualizzate.
+\\
+Dal punto di vista tecnico, un sistema di realtà aumentata si basa su tre componenti fondamentali:
+\begin{itemize}
+    \item acquisizione dell’ambiente reale tramite sensori, come fotocamere o sensori di profondità
+    \item elaborazione e tracciamento spaziale per stimare la posizione e l'orientamento di oggetti reali (\textit{tracking} e \textit{pose estimation})
+    \item rendering in tempo reale degli oggetti virtuali
+\end{itemize}
+Tecniche come il \textit{marker-based tracking}, il \textit{markerless tracking} e gli approcci basati su \ac{slam}, consentono di garantire coerenza geometrica e stabilità visiva dei contenuti aumentati.
+\\
+Dal punto di vista concettuale, un sistema può essere definito di realtà aumentata se soddisfa tre requisiti fondamentali: combinazione di elementi reali e virtuali, interattività in tempo reale e corretta registrazione spaziale tra oggetti digitali e ambiente fisico.
+Tali caratteristiche rendono l’AR una tecnologia abilitante nell’ambito dell’interazione uomo-macchina, contribuendo allo sviluppo di interfacce sempre più immersive e contestualizzate.
 % section Realtà aumentata (end)
 
 \section{ThreeJS}\label{sec:threejs} % (fold)
@@ -107,7 +122,7 @@ Gli oggetti rappresentati in una scena, chiamati \textit{mesh}, sono costituiti 
 %
 \lstinputlisting[language=JavaScript,caption={Esempio di una scena 3D con ThreeJS},label={lst:sample-threejs}]{listings/Threejs.js}
 %
-Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard WebXR, un’API che consente la realizzazione di applicazioni di \acl{VR} e \acl{AR} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’API WebXR.
+Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard WebXR, un’API che consente la realizzazione di applicazioni di \acl{vr} e \acl{ar} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’API WebXR.
 %
 Attraverso l’utilizzo di componenti dedicati, è possibile creare ambienti immersivi tridimensionali in cui la scena viene renderizzata in modo stereoscopico e aggiornata in funzione dei movimenti dell’utente. L’integrazione con WebXR permette inoltre di gestire input avanzati, come controller e sistemi di tracciamento.
 %

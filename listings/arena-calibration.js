@@ -2,7 +2,7 @@ class Arena {
     ...
     #getCornerFromLocation(location) {
         if (!Location.isValid(location)) return undefined;
-        return this.corners.find(c => c.location == location);
+        return this.#corners.find(c => c.location == location);
     }
 
     #estimateArenaAxes() {

@@ -229,9 +229,12 @@ async function createArena(bestValues = true) {
         const loc = locations.find(l => l.id == t.getId()).loc;
         if (!loc) return;
 
-        corners.push(new Corner(bestValues ? t.getBestPosition() : t.getAlternativePosition(),
-            bestValues ? t.getBestRotation() : t.getAlternativeRotation(),
-            loc));
+        const pos = bestValues ? t.getBestPosition() : t.getAlternativePosition()
+        // handle camera world trasformations, not calculated during pose estimation
+        pos.applyMatrix4(camera.matrixWorld);
+        const rot = bestValues ? t.getBestRotation() : t.getAlternativeRotation()
+
+        corners.push(new Corner(pos, rot, loc));
     })
 
     arena = new Arena(corners, simWorldSize);

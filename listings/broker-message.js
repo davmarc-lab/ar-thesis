@@ -29,8 +29,12 @@ async function createArena(bestValues = true) {
 class Arena {
     ...
     static normalizeSimulatedPos(arena, position) {
-        const xfactor = arena.arenaSizes.x / arena.simulatedSize;
-        const yfactor = arena.arenaSizes.y / arena.simulatedSize;
+        const arenaSize = arena.getArenaSize();
+        const simSize = arena.getSimulatedSize();
+
+        const xfactor = arenaSize.x / simSize;
+        const yfactor = arenaSize.y / simSize;
+
         return new THREE.Vector3(position.x * xfactor, position.y * yfactor, 0);
     }
 }
