@@ -29,7 +29,12 @@
 
 \acrodef{wcs}[WCS]{Sistema di Coordinate del Mondo}
 
+\acrodef{scafi}[ScaFi]{ScaFi (Scala Fields)}
+\acrodef{dsl}[DSL]{Domain Specific Language}
+\acrodef{hofc}[HOFC]{Higher-Order Field Calculus}
 \acrodef{slam}[SLAM]{Simultaneous Localization and Mapping}
+
+\acrodef{tls}[TLS]{Transport Layer Security}
 
 \mainlinespacing{1.241} % line spacing in mainmatter, comment to default (1)
 
@@ -81,7 +86,19 @@ you may need both \ac{vm} and \acp{vm}.
 \chapter{Background}\label{chap:background} % (fold)
 
 \section{Project Emerge}\label{sec:project_emerge} % (fold)
-
+\textit{Project Emerge} nasce con l’obiettivo di esplorare il coordinamento di uno sciame di droni riproducendo le dinamiche tipiche di un sistema distribuito reale.
+L’idea alla base del progetto è quella di osservare come un insieme di agenti autonomi, dotati di capacità computazionali e comunicative limitate, possa raggiungere comportamenti collettivi coerenti senza fare affidamento su un controllo centralizzato.
+\\
+Il progetto propone un’implementazione del nucleo logico dell’Aggregate Computing, adottando Scala come linguaggio di programmazione attraverso l’utilizzo del framework \ac{scafi}.
+ScaFi è una libreria, scritta in Scala, e framework per per la programmazione aggregata, che implementa una variante della semantica operazionale dell’\ac{hofc}, resa disponibile come \ac{dsl}, fornendo una piattaforma e un insieme di API per la simulazione e l’esecuzione di sistemi e applicazioni aggregate.
+Grazie all’impiego di sistemi decentralizzati, ogni elemento elabora localmente le informazioni e le condivide con i nodi vicini, superando i limiti di un approccio centralizzato, spesso non ideale in contesti dinamici.
+Applicato ad uno sciame di droni, è possibile definire obiettivi collettivi, come la copertura spaziale, formazione o esplorazione cooperativa, in modo astratto, garantendo l'adattamento automatico alle variazioni topologiche dell'ambiente circostante.
+\\
+In seguito le simulazioni si sono trasformate in esperienze reali: sono stati realizzati dei droni fisici in grado di coordinarsi all'interno di uno sciame. Ognuno composto da microcontrollori in grado di gestire comunicazioni \textit{wireless}, monitoraggio e gestione energetica in tempo reale ed il movimento del robot, che dipende dalla velocità di entrambe le coppie di ruote motrici. 
+Tramite l'utilizzo di un'interfaccia web è possibile visualizzare lo stato di tutti i robot, controllarli individualmente ed eventualmente modificare la formazione corrente dell'interno sciame.
+\\
+Infine viene proposto un simulatore in Python, fondamentale per lo sviluppo di questa tesi, dove in mancanza robot fisici è possibile simularne l'esistenza. Permette di gestire numerevoli robot virtuali e modificarne lo stato, utilizzando appositi comandi, inviando costantemente le opportune informazioni al broker \acs{mqtt}.
+%
 % section Project Emerge (end)
 
 \section{Realtà aumentata}\label{sec:realta_aumentata} % (fold)
@@ -181,7 +198,7 @@ Una volta individuati e calcolata una stima della loro posizione all'interno di 
         \item Calibrazione di un nuovo sistema di coordinate
         \item Posizionamento di una \textit{mesh} sul piano dell'arena
     \end{itemize}
-    \item Rappresentazione dei robot emulati nella scena in realtà aumentata ricevendo tutte le informazioni dal broker \ac{mqtt}
+    \item Rappresentazione dei robot emulati nella scena in realtà aumentata ricevendo le informazioni dal broker \ac{mqtt}
 \end{itemize}
 %
 % section Requisiti (end)
@@ -192,9 +209,9 @@ Una volta individuati e calcolata una stima della loro posizione all'interno di 
 WebXR rappresenta un’evoluzione significativa nel web, consentendo l’accesso diretto ad esperienze di realtà virtuale e aumentata attraverso il browser. Tuttavia, questa tecnologia comporta dei rischi elevati se la sicurezza dell'utente non viene gestita correttamente.
 \\
 La WebXR Device API permette di interagire con numerevoli componenti e sensori avanzati come accelerometri, giroscopi, fotocamere e microfoni, e persino dispositivi di input specializzati.
-Alcune funzionalità, come l’uso di \texttt{immersive-ar} o \texttt{immersive-vr}, non possono essere attivate se la connessione non è HTTPS o se la pagina non è in un contesto \textit{trusted}, proprio per evitare che contenuti malevoli possano compromettere la privacy o la sicurezza del dispositivo.
+Alcune funzionalità, come l’uso di \texttt{immersive-ar} o \texttt{immersive-vr}, non possono essere attivate se la connessione non è sicura o se la pagina non è in un contesto \textit{trusted}, proprio per evitare che contenuti malevoli possano compromettere la privacy o la sicurezza del dispositivo.
 \\
-Per prevenire che le informazioni sensibili vengano intercettate o manipolate, tutte le sessioni WebXR devono essere servite tramite connessioni sicure HTTPS. Si basa su TLS (Transport Layer Security), e garantisce la codifica \textit{end-to-end} dei dati tra client e server, autenticità del sito web e integrità dei contenuti, impedendo attacchi di tipo \textit{man-in-the-middle} o \textit{spoofing}.
+Per prevenire l'intercettazione o la manipolazione delle informazioni sensibili, tutte le sessioni WebXR devono essere servite tramite connessioni sicure HTTPS. Si basa su \ac{tls}, garantendo la codifica \textit{end-to-end} dei dati tra client e server, l'autenticità del sito web e l'integrità dei contenuti, impedendo attacchi di tipo \textit{man-in-the-middle} o \textit{spoofing}.
 \\
 Il browser non permette l’inizializzazione di sessioni immersive su pagine non sicure e interrompe l'esecuzione di operazioni non approvate dall’utente. Quest'ultime riprendono la normale esecuzione nel momento in cui l'utente acconsente all’accesso agli eventuali sensori e dati sensibili condivisi.
 % subsection WebXR e HTTPS (end)
@@ -245,7 +262,7 @@ Nel flusso esecutivo il riconoscimento, essendo una parte molto onerosa, non vie
 Ciò garantisce la fluidità dell'applicativo in fase di calibrazione, ma porta a non avere un tracking immediato dei marker presenti.
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=.4\linewidth]{./figures/diag-marker.png}
+    \includegraphics[width=.5\linewidth]{./figures/diag-marker.png}
     \caption{Diagramma delle classi della classe \texttt{Marker}}
     \label{fig:diag-marker}
 \end{figure}
@@ -266,10 +283,11 @@ L'arena è un'area, delimitata dai marker ArUco posizionati nel mondo reale, con
 Per creare e calibrare un'arena virturale, è necessario definire quali sono i limiti dell'arena stessa. Questi limiti sono i \texttt{Corner}, la cui posizione nella scena virtuale viene definita dai marker ArUco ricercati nella fase precedente.
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=0.3\linewidth]{./figures/diag-corner.png}
+    \includegraphics[width=.4\linewidth]{./figures/diag-corner.png}
     \caption{Diagramma delle classi di \texttt{Corner}}
     \label{fig:diag-corner}
 \end{figure}
+\\
 Ogni \texttt{Corner} necessita dei seguenti parametri:
 \begin{itemize}
     \item \texttt{position}: la posizione nella scena 3D
@@ -281,14 +299,14 @@ Le \texttt{Location} sono indispensabili per il calcolo degli assi relativi dell
 %
 \subsection{Calibrazione dell'arena}\label{sub:calibrazione_dell_arena} % (fold)
 Una volta aver ottenuto un'arena valida, bisogna effettuare delle opportune operazioni per poter permettere il posizionamento di robot all'interno dell'area delimitata.
-In particolare, il simulatore invia le posizioni dei robot relative all'origine dell'ambiente simulato $(0, 0, 0)$, tuttavia la posizione dell'origine dell'arena raramente corrisponde a quella del sistema emulato. Perciò le posizioni ricevute, relative all'origine della scena emulata, devono essere trasformate in posizioni relative al nuovo sistema di coordinate.
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=0.4\linewidth]{./figures/diag-arena-origin.png}
+    \includegraphics[width=.4\linewidth]{./figures/diag-arena-origin.png}
     \caption{Diagramma delle classi parziale: \texttt{Arena} e l'origine}
     \label{fig:diag-arena-origin}
 \end{figure}
-%
+\\
+In particolare, il simulatore invia le posizioni dei robot relative all'origine dell'ambiente simulato $(0, 0, 0)$, tuttavia la posizione dell'origine dell'arena raramente corrisponde a quella del sistema emulato. Perciò le posizioni ricevute, relative all'origine della scena emulata, devono essere trasformate in posizioni relative al nuovo sistema di coordinate.
 Viene considerato il punto centrale del poligono definito dai quattro angoli dell'arena, come origine del nuovo sistema di coordinate.
 In matematica, quest'utlimo è chiamato centroide (centro geometrico o centro della figura): si ottiene calcolando la media aritmetica della posizioni dei punti di una figura piana o solida.
 $$
@@ -300,14 +318,15 @@ Il punto trovato corrisponde all'origine dell'arena nel sistema di coordinate de
 \subsubsection{Calcolo degli assi di riferimento}\label{sec:calcolo_degli_assi_di_riferimento} % (fold)
 Per permettere la traslazione dei robot nel nuovo sistema di riferimento, bisogna definire un'asse orizzontale ed uno verticale, entrambi relativi all'arena.
 Qui entra in gioco la \texttt{Location} di ogni \texttt{Corner}: data la posizione di due \texttt{Corner}, il vettore normalizzato della differenza fra le posizioni definisce un asse dell'arena.
-Per l'asse verticale si prendono in considerazione due angoli che si trovano entrambi a destra o a sinistra (ad esempio \texttt{TOP\_LEFT} e \texttt{BOT\_LEFT}). Il vettore risultante avrà il verso che punta all'angolo superiore.
-Mentre per l'asse orizzontale si prendono in considerazione due corner che si trovano, idealmente, sulla parte inferiore oppure sulla parte superiore (ad esempio \texttt{TOP\_LEFT} e \texttt{TOP\_RIGHT}).
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=0.3\linewidth]{./figures/diag-arena-axes.png}
+    \includegraphics[width=.5\linewidth]{./figures/diag-arena-axes.png}
     \caption{Diagramma delle classi parziale: \texttt{Arena} e \texttt{ArenaAxes}}
     \label{fig:diag-arena-axes}
 \end{figure}
+\\
+Per l'asse verticale si prendono in considerazione due angoli che si trovano entrambi a destra o a sinistra (ad esempio \texttt{TOP\_LEFT} e \texttt{BOT\_LEFT}). Il vettore risultante avrà il verso che punta all'angolo superiore.
+Mentre per l'asse orizzontale si prendono in considerazione due corner che si trovano, idealmente, sulla parte inferiore oppure sulla parte superiore (ad esempio \texttt{TOP\_LEFT} e \texttt{TOP\_RIGHT}).
 %
 % subsubsection Calcolo degli assi di riferimento (end)
 %
@@ -335,11 +354,10 @@ Le informazioni ricevute dal broker, in formato \textit{JSON}, vengono memorizza
 \end{itemize}
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=0.4\linewidth]{./figures/diag-robot.png}
+    \includegraphics[width=.4\linewidth]{./figures/diag-robot.png}
     \caption{Diagramma delle classi del \texttt{Robot}}
     \label{fig:diag-robot}
 \end{figure}
-
 Tutti i robot utilizzano lo stesso modello di base, per questo motivo il modello stesso viene caricato una volta sola e, ogni volta che viene aggiunto un robot, viene creata una nuova copia con un nuovo identificativo nella scena di \textit{ThreeJS}.
 Per ogni robot non è necessario tenere traccia delle posizioni relative all'emulatore: infatti ogni posizione viene convertita nel nuovo sistema di coordinate prima di creare un'istanza di questa classe.
 % subsubsection Gestione dei Robot emulati (end)
@@ -366,13 +384,14 @@ Per quanto riguarda l'orientamento dei robot, viene utilizzato l'asse $y$ dell'a
 
 \subsection{Movimento dei robot}\label{sub:movimento_dei_robot} % (fold)
 Per poter muovere i robot all'interno dell'arena, bisogna calcolare la loro posizione all'interno della scena. Le posizioni ricevute dal broker \ac{mqtt} vengono normalizzate, per cambiare sistema di riferimento nel sistema di coordinate relativo all'arena virtuale. Tuttavia queste coordinate normalizzate sono ancora relative ad un origne diversa da quella della scena, dunque non è possible utilizzarle nel \ac{wcs}.
-La classe \texttt{Arena} implementa un metodo che converte le coordinate relative date in coordinate del mondo, permettendo una corretta traslazione delle \textit{mesh}.
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=0.4\linewidth]{./figures/diag-robot-movement.png}
+    \includegraphics[width=.5\linewidth]{./figures/diag-robot-movement.png}
     \caption{Diagramma delle classi parziale: \texttt{Arena} e movimento dei \texttt{Robot}}
     \label{fig:diag-robot-movement}
 \end{figure}
+\\
+La classe \texttt{Arena} implementa un metodo che converte le coordinate relative date in coordinate del mondo, permettendo una corretta traslazione delle \textit{mesh}.
 Questo metodo sfrutterà sia l'origine che gli assi dell'arena: l'origine definisce il punto in cui tutte le traslazione devono iniziare, mentre gli assi indicano le direzioni su cui devono essere effettuate. Non è sufficiente sommare le coordinate di una posizione relativa alle coordinate dell'origine, in quanto tutte le traslazioni avvengo nel \ac{wcs}: supponendo di effettuare una traslazione lungo l'asse $x$ del mondo, non si ha alcuna certezza che corrisponda a quella corretta nel piano dell'arena.
 In questo caso gli assi del mondo e dell'arena non corrispondono; utilizzando direttamente gli assi dell'arena il problema non si presenta in alcuna situazione.
 % subsection Movimento dei robot (end)
@@ -417,8 +436,7 @@ Prima di utilizzarla bisogna capovolgere l'immagine: il metodo \texttt{readRende
 Il metodo \texttt{flipImageVertically} analizza metà dell'immagine, partendo dall'alto, e ad ogni iterazione scambia la riga corrente con la rispettiva riga dal fondo.
 \lstinputlisting[language=JavaScript,caption={Inizializzazione della scena 3D con il supporto per WebXR},label={lst:init-scene-camera}]{./listings/scene-snapshot.js}
 %
-Una volta ottenuta un'immagine.
-La ricerca dei marker viene eseguita dopo un numero di \texttt{frame} del \rd.
+Una volta ottenuta l'immagine viene processata da \textit{js-aruco2}, ottenendo le posizioni dei marker in coordinate 2D.
 \lstinputlisting[language=JavaScript,caption={Inizializzazione della scena 3D con il supporto per WebXR},label={lst:init-scene-camera}]{./listings/find-markers.js}
 % subsection Ricerca dei marker (end)
 
@@ -503,7 +521,33 @@ La posizione di ogni robot viene calcolata partendo dall'origine dell'arena, a c
 % chapter Implementazione (end)
 
 \chapter{Valutazione}\label{chap:valutazione} % (fold)
+In questo capitolo vengono discussi i risultati ed i limiti del sistema allo stato attuale, valutando il raggiungimento dei requisiti elencati nella \Cref{sec:requisiti}.
+%
+\section{Stabilità del rilevamento dei marker}\label{sec:stabilita_del_rilevamento_dei_marker} % (fold)
+Il riconoscimento e il calcolo delle posizioni dei marker reali è un punto fondamentale per il corretto funzionamento dell'applicazione. I problemi che possono verificarsi sono numerosi: l'illuminazione può creare degli artefatti durante l'analisi dell'immagine portando ad un mancato tracciamento di un marker, come anche analizzando un immagine non perfettamente nitida.
+Inoltre la stima delle posizioni viene effettuata utilizzando \textit{POSIT}, un'algoritmo iterativo e approssimato della posizione reale, perciò valutando gli stessi dati iniziali più volte è possibile ottenere risultati differenti. Questo fenomeno principalmente è causato da variazioni, anche minime, di numeri decimali durante le iterazioni dell'algoritmo.
+Per questo motivo il risultato ottenuto non è sempre preciso e uguale ad ogni avvio dell'applicativo.
+%
+% section Stabilità del rilevamento dei marker (end)
 
+\section{Gestione delle comunicazioni}\label{sec:gestione_delle_comunicazioni} % (fold)
+
+% section Gestione delle comunicazioni (end)
+
+\section{Gestione dell'arena virtuale}\label{sec:gestione_dell_arena_virtuale} % (fold)
+
+% section Gestione dell'arena virtuale (end)
+
+\section{Scalabilità del sistema}\label{sec:scalabilita_del_sistema} % (fold)
+
+% section Scalabilità del sistema (end)
+
+\begin{itemize}
+    \item accuratezza delle posizioni stimate
+    \item gestione di eventuali marker duplicati
+    \item connessione con mqtt e gestione dei messaggi
+    \item prestazioni con elevati droni
+\end{itemize}
 % chapter Valutazione (end)
 
 \chapter{Conclusioni e lavori futuri}\label{chap:conclusioni_e_lavori_futuri} % (fold)

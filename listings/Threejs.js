@@ -2,7 +2,6 @@ import * as THREE from 'three';
 
 const width = window.innerWidth;
 const height = window.innerHeight;
-
 // inizializza il renderer con eventuali parametri aggiuntivi
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 // imposta la grandezza in pixel dell'elemento dove renderizzare la scena
@@ -24,21 +23,17 @@ const geometry = new THREE.BoxGeometry(1, 1, 1);
 // creazione di un material di colore rosso
 const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const mesh = new THREE.Mesh(geometry, material);
-
 // aggiunta della mesh alla scena
 scene.add(mesh);
-
-// definisce quale funzione eseguire ad ogni `requestAnimationFrame()`
-renderer.setAnimationLoop(animate);
-
 // aggiungo l'elemento creato dal renderer, se non specificato, alla pagina HTML
 document.body.appendChild(renderer.domElement);
 
+// definisce quale funzione eseguire ad ogni `requestAnimationFrame()`
+renderer.setAnimationLoop(animate);
 function animate(time) {
     // operazioni sulle mesh ad ogni frame
 	mesh.rotation.x = time / 2000;
 	mesh.rotation.y = time / 1000;
-
     // render della scena nel canvas
 	renderer.render(scene, camera);
 }
