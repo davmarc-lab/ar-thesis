@@ -582,7 +582,17 @@ Nei test eseguiti i limiti dell'arena vengono rappresentati come cubi all'intern
 %
 % section Gestione dell'arena virtuale (end)
 \section{Stabilità del sistema}\label{sec:stabilita_del_sistema} % (fold)
-In questo paragrafo viene analizzata la stabilità dell'applicativo 
+In questo paragrafo viene analizzata la stabilità dell'applicativo analizzando le prestazioni gestendo numerosi robot nello stesso momento.
+Vengono presi in cosiderazione i tempi impiegati sia per renderizzare tutti i robot, sia il tempo impiegato ad aggiornare tutte le posizioni. Sono stati implementati degli script in Python che permettono di inviare dei mesassaggi al broker, che verranno elaborati dall'emulatore per spostare i robot nel mondo emulato.
+\\
+Di seguito viene riportato il grafico contenente l'analisi dei tempi di esecuzione della fase di rendering, in una scena statica. L'esecuzione, in una fase statica senza movimenti, rimane fluida fino al raggiungimento di circa $50$ robot nello stesso momento.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=.8\linewidth]{./figures/render-times.png}
+    \caption{Grafico dei tempi di render senza movimento}
+    \label{fig:render-times}
+\end{figure}
+
 %
 % section Stabilità del sistema (end)
 
