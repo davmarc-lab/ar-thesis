@@ -6,6 +6,8 @@
 \usepackage{shortcuts}
 \usepackage{acronym}
 
+\usepackage{subcaption}
+
 \school{\unibo}
 \programme{Corso di Laurea in Ingegneria e Scienze Informatiche}
 \title{Un sistema di realtà aumentata per la Robotica di sciame}
@@ -522,25 +524,67 @@ La posizione di ogni robot viene calcolata partendo dall'origine dell'arena, a c
 
 \chapter{Valutazione}\label{chap:valutazione} % (fold)
 In questo capitolo vengono discussi i risultati ed i limiti del sistema allo stato attuale, valutando il raggiungimento dei requisiti elencati nella \Cref{sec:requisiti}.
+Sono state analizzate delle situazioni specifiche per ogni test affrontato, eventualmente aggiungendo ulteriori scene non necessariamente in realtà aumentata. Inoltre sono stati implementati script in Python per poter generare grafici e inviare messaggi specifici all'emulatore.
 %
 \section{Stabilità del rilevamento dei marker}\label{sec:stabilita_del_rilevamento_dei_marker} % (fold)
 Il riconoscimento e il calcolo delle posizioni dei marker reali è un punto fondamentale per il corretto funzionamento dell'applicazione. I problemi che possono verificarsi sono numerosi: l'illuminazione può creare degli artefatti durante l'analisi dell'immagine portando ad un mancato tracciamento di un marker, come anche analizzando un immagine non perfettamente nitida.
-Inoltre la stima delle posizioni viene effettuata utilizzando \textit{POSIT}, un'algoritmo iterativo e approssimato della posizione reale, perciò valutando gli stessi dati iniziali più volte è possibile ottenere risultati differenti. Questo fenomeno principalmente è causato da variazioni, anche minime, di numeri decimali durante le iterazioni dell'algoritmo.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=.8\linewidth]{./figures/posit-error.png}
+    \caption{Variazione degli errori di POSIT}
+    \label{fig:posit-error}
+\end{figure}
+Inoltre la stima delle posizioni viene effettuata utilizzando \textit{POSIT}, un'algoritmo iterativo e approssimato della posizione reale, perciò valutando gli stessi dati iniziali più volte è possibile ottenere risultati differenti.
+\\
+Questo fenomeno principalmente è causato da variazioni, anche minime, di numeri decimali durante le iterazioni dell'algoritmo.
 Per questo motivo il risultato ottenuto non è sempre preciso e uguale ad ogni avvio dell'applicativo.
+\\
+Nella \Cref{fig:posit-error} viene mostrata la variazione dell'errore, calcolato durante la stima delle posizioni, di \textit{POSIT}: un errore elevato significa un forte disallineamento tra la posizione reale di un marker e quella stimata nella scena, un errore minore mostrerà risultati più accurati.
 %
 % section Stabilità del rilevamento dei marker (end)
-
 \section{Gestione delle comunicazioni}\label{sec:gestione_delle_comunicazioni} % (fold)
-
+La comunicazione con il broker viene impiegata esclusivamente per ottenere i dati relativi alla posizione di ogni robot emulato. Ad ogni messaggio ricevuto il sistema assegna le nuove posizioni, convertite nel sistema di coordinate corrente, ed aggiunge eventuali robot se non sono presenti all'interno della scena.
+Nel caso in cui la connessione viene persa, quindi il client \ac{mqtt} non riesce a comunicare con il broker, il sistema entra in fase di riconnessione. In questo periodo l'applicativo non viene interrotto ma ritenta la connesione al broker costantemente dopo un'intervallo di tempo specifico. Tuttavia l'arena, non ricevendo più messaggi, smette di aggiornare le posizioni dei robot ma non impedisce all'utente di muoversi liberamente all'interno. In questo modo viene garantito un funzionamento, anche se minimale, dell'applicativo.
+Inoltre, una volta che la connessione viene ristabilita, il sistema torna al suo normale funzionamento.
+Per avvisare l'utente in queste situazioni critiche, come mostrato nelle immagini successive, viene implementata un'interfaccia grafica aggiuntiva che visualizza lo stato attuale della connessione: ``connesso", ``disconnesso", ``riconnessione".
+\begin{figure}[htp]
+    \centering
+    \begin{subfigure}{.3\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures/mqtt-connected-cut.jpeg}
+        \caption{Connesso}
+        \label{fig:mqtt-connected}
+    \end{subfigure}
+    %
+    \hfill
+    \begin{subfigure}{.3\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures/mqtt-reconnecting-cut.jpeg}
+            \caption{Riconnesione}
+        \label{fig:mqtt-connected}
+    \end{subfigure}
+    %
+    \hfill
+    \begin{subfigure}{.3\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures/mqtt-disconnected-cut.jpeg}
+        \caption{Disconnesso}
+        \label{fig:mqtt-connected}
+    \end{subfigure}
+    \caption{Stato della connessione con il broker}
+\end{figure}
+%
 % section Gestione delle comunicazioni (end)
-
 \section{Gestione dell'arena virtuale}\label{sec:gestione_dell_arena_virtuale} % (fold)
-
+Il sistema dell'arena virtuale ha soddisfatto pienamente i requisiti proposti. Le fasi di calcolo dell'origine e degli assi sono accurate, garantendo un movimento realistico.
+Tuttavia l'immersività della scena, ovvero l'accuratezza del posizionamento dell'arena nel mondo aumentato, dipende dalla fase di riconoscimento e posizionamento dei marker all'interno della scena.
+Nei test eseguiti i limiti dell'arena vengono rappresentati come cubi all'interno della scena.
+%
 % section Gestione dell'arena virtuale (end)
-
-\section{Scalabilità del sistema}\label{sec:scalabilita_del_sistema} % (fold)
-
-% section Scalabilità del sistema (end)
+\section{Stabilità del sistema}\label{sec:stabilita_del_sistema} % (fold)
+In questo paragrafo viene analizzata la stabilità dell'applicativo 
+%
+% section Stabilità del sistema (end)
 
 \begin{itemize}
     \item accuratezza delle posizioni stimate
