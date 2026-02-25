@@ -16,8 +16,8 @@
 \author{Marchetti Davide}
 \date{\today}
 \subject{Programmazione ad oggetti}
-\supervisor{Mirko Viroli}
-\cosupervisor{Gianluca Aguzzi}
+\supervisor{Prof. Mirko Viroli}
+\cosupervisor{Dott. Gianluca Aguzzi}
 \session{IV}
 \academicyear{2024-2025}
 
@@ -30,10 +30,11 @@
 \acrodef{ar}[AR]{Realtà Aumentata}
 \acrodef{vr}[VR]{Realtà Virtuale}
 
-\acrodef{mqtt}[MQTT]{Message Queuing Telemetry Transport}
+\acrodef{api}[API]{Application Programming Interface}
 
 \acrodef{wcs}[WCS]{Sistema di Coordinate del Mondo}
 
+\acrodef{mqtt}[MQTT]{Message Queuing Telemetry Transport}
 \acrodef{scafi}[ScaFi]{Scala Fields}
 \acrodef{dsl}[DSL]{Domain Specific Language}
 \acrodef{hofc}[HOFC]{Higher-Order Field Calculus}
@@ -44,18 +45,14 @@
 \mainlinespacing{1.241} % line spacing in mainmatter, comment to default (1)
 
 \begin{document}
-
+%
 \frontmatter\frontispiece
-
+%
 \begin{abstract}	
 Max 2000 characters, strict.
 \ac{js}
 \end{abstract}
-
-\begin{dedication} % this is optional
-Optional. Max a few lines.
-\end{dedication}
-
+%
 %----------------------------------------------------------------------------------------
 \tableofcontents   
 \listoffigures     % (optional) comment if empty
@@ -95,12 +92,12 @@ you may need both \ac{vm} and \acp{vm}.
 L’idea alla base del progetto è quella di osservare come un insieme di agenti autonomi, dotati di capacità computazionali e comunicative limitate, possa raggiungere comportamenti collettivi coerenti senza fare affidamento su un controllo centralizzato.
 \\
 Il progetto propone un’implementazione del nucleo logico dell’\ac{ac} \cite{ac}, adottando Scala come linguaggio di programmazione attraverso l’utilizzo del \textit{framework} \ac{scafi} \cite{scafi}.
-\ac{scafi} è una libreria, scritta in Scala, e framework per per la programmazione aggregata, che implementa una variante della semantica operazionale dell’\ac{hofc}, resa disponibile come \ac{dsl}, fornendo una piattaforma e un insieme di API per la simulazione e l’esecuzione di sistemi e applicazioni aggregate.
+\ac{scafi} è una libreria, scritta in Scala, e framework per per la programmazione aggregata, che implementa una variante della semantica operazionale dell’\ac{hofc}, resa disponibile come \ac{dsl}, fornendo una piattaforma e un insieme di \ac{api} per la simulazione e l’esecuzione di sistemi e applicazioni aggregate.
 Grazie all’impiego di sistemi decentralizzati, ogni elemento elabora localmente le informazioni e le condivide con i nodi vicini, superando i limiti di un approccio centralizzato, spesso non ideale in contesti dinamici.
 Applicato ad uno sciame di droni, è possibile definire obiettivi collettivi, come la copertura spaziale, formazione o esplorazione cooperativa, in modo astratto, garantendo l'adattamento automatico alle variazioni topologiche dell'ambiente circostante.
 \\
 In seguito le simulazioni si sono trasformate in esperienze reali: sono stati realizzati dei droni fisici in grado di coordinarsi all'interno di uno sciame. Ognuno composto da microcontrollori in grado di gestire comunicazioni \textit{wireless}, monitoraggio e gestione energetica in tempo reale ed il movimento del robot, che dipende dalla velocità di entrambe le coppie di ruote motrici. 
-Tramite l'utilizzo di un'interfaccia web è possibile visualizzare lo stato di tutti i robot, controllarli individualmente ed eventualmente modificare la formazione corrente dell'interno sciame.
+Tramite l'utilizzo di un'interfaccia \textit{web} è possibile visualizzare lo stato di tutti i robot, controllarli individualmente ed eventualmente modificare la formazione corrente dell'interno sciame.
 \\
 Infine viene proposto un simulatore in Python, fondamentale per lo sviluppo di questa tesi, dove in mancanza robot fisici è possibile simularne l'esistenza. Permette di gestire numerevoli robot virtuali e modificarne lo stato, utilizzando appositi comandi, inviando costantemente le opportune informazioni al \textit{broker} \ac{mqtt}.
 \begin{figure}[htp]
@@ -111,7 +108,6 @@ Infine viene proposto un simulatore in Python, fondamentale per lo sviluppo di q
 \end{figure}
 %
 % section Project Emerge (end)
-
 \section{Realtà aumentata}\label{sec:realta_aumentata} % (fold)
 La \acf{ar} è una tecnologia che permette di arricchire il mondo fisico con contenuti digitali, come immagini, informazioni testuali, modelli tridimensionali, integrati in tempo reale.
 A differenza della \acf{vr}, che immerge l’utente in uno spazio interamente simulato sostituendo la percezione dell’ambiente reale, l’\ac{ar} si caratterizza per la coesistenza tra mondo fisico e componenti digitali, preservando la continuità con lo spazio reale.
@@ -130,7 +126,7 @@ Tali caratteristiche rendono l’AR una tecnologia abilitante nell’ambito dell
 % section Realtà aumentata (end)
 
 \section{ThreeJS}\label{sec:threejs} % (fold)
-\textit{ThreeJS} \cite{threejs} è una libreria in JavaScript progettata per semplificare lo sviluppo di applicazioni di grafica tridimensionale in ambienti web. Si basa su WebGL, un’API a basso livello che consente l’accesso diretto alle funzionalità della GPU attraverso il \textit{browser}.
+\textit{ThreeJS} \cite{threejs} è una libreria in JavaScript progettata per semplificare lo sviluppo di applicazioni di grafica tridimensionale in ambienti web. Si basa su WebGL, un’\ac{api} a basso livello che consente l’accesso diretto alle funzionalità della GPU attraverso il \textit{browser}.
 L’utilizzo diretto di WebGL richiede una conoscenza approfondita della pipeline grafica e della programmazione tramite shader, per questo motivo ThreeJS introduce un livello di astrazione che consente di sviluppare scene tridimensionali complesse riducendo la complessità implementativa, pur mantenendo un elevato grado di flessibilità.
 \\
 %
@@ -155,14 +151,14 @@ Nel \cref{lst:sample-threejs} viene riportata l'implementazione di una semplice 
     \label{fig:threejs-scene}
 \end{figure}
 %
-Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard \textit{WebXR} \cite{webxr}, un’API che consente la realizzazione di applicazioni di \acl{vr} e \acl{ar} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’API WebXR.
+Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard \textit{WebXR} \cite{webxr}, un’\ac{api} che consente la realizzazione di applicazioni di \acl{vr} e \acl{ar} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’\ac{api} WebXR.
 %
 Attraverso l’utilizzo di componenti dedicati, è possibile creare ambienti immersivi tridimensionali in cui la scena viene renderizzata in modo stereoscopico e aggiornata in funzione dei movimenti dell’utente. L’integrazione con WebXR permette inoltre di gestire input avanzati, come controller e sistemi di tracciamento.
 %
 \subsection{WebXR}\label{sub:webxr} % (fold)
 WebXR rappresenta un’evoluzione significativa nel web, consentendo l’accesso diretto ad esperienze di realtà virtuale e aumentata attraverso il browser. Tuttavia, questa tecnologia comporta dei rischi elevati se la sicurezza dell'utente non viene gestita correttamente.
 \\
-La WebXR Device API permette di interagire con numerevoli componenti e sensori avanzati come accelerometri, giroscopi, fotocamere e microfoni, e persino dispositivi di input specializzati.
+La \textit{WebXR Device API} \cite{webxr} permette di interagire con numerevoli componenti e sensori avanzati come accelerometri, giroscopi, fotocamere e microfoni, e persino dispositivi di input specializzati.
 Alcune funzionalità non possono essere utilizzate se la connessione non è sicura o se la pagina non è in un contesto \textit{trusted}, proprio per evitare che contenuti malevoli possano compromettere la privacy o la sicurezza del dispositivo.
 \\
 Per prevenire l'intercettazione o la manipolazione delle informazioni sensibili, tutte le sessioni WebXR devono essere servite tramite connessioni sicure \textit{HTTPS}. Si basa su \ac{tls}, garantendo la codifica \textit{end-to-end} dei dati tra client e server, l'autenticità del sito web e l'integrità dei contenuti, impedendo attacchi di tipo \textit{man-in-the-middle} o \textit{spoofing}.
@@ -210,8 +206,8 @@ Tipicamente \ac{mqtt} instaura un canale di comunicazione bidirezionale sfruttan
 %
 \section{Obiettivi}\label{sec:obiettivi} % (fold)
 %
-Questa tesi si pone come obiettivo la realizzazione di un'applicazione web che permetta di trasformare il sistema emulato, utilizzato nella notte europea dei ricercatori, in una scena in realtà aumentata sfruttando un dispositivo dotato di una fotocamera.
-L'applicativo deve inizialmente calibrare un'arena virtuale, sfruttando la telecamera del dispositivo e quattro marker ArUco posizionati nel mondo reale.
+Questa tesi si pone come obiettivo la realizzazione di un'applicazione web che permetta di trasformare il sistema emulato, utilizzato nella Notte Europea dei Ricercatori, in una scena in realtà aumentata sfruttando un dispositivo dotato di una fotocamera.
+L'applicativo deve inizialmente calibrare un'arena virtuale, sfruttando la telecamera del dispositivo e quattro \textit{marker} \textit{ArUco} \cite{aruco-1} \cite{aruco-2} posizionati nel mondo reale.
 Una volta individuati e calcolata una stima della loro posizione all'interno di una scena 3D, devono essere disegnati i robot emulati dal sistema, all'interno dell'arena virtuale. Le informazioni relative alla posizione ed orientamento di ogni elemento vengono condivise mediante un broker \ac{mqtt} in un topic specifico.
 %
 % section Obiettivi (end)
@@ -286,6 +282,8 @@ Inolre utilizzano la stessa mesh con la stessa dimensione, ma rotazione e trasla
 % subsection Robot (end)
 %
 \subsection{Arena}\label{sub:arena} % (fold)
+ASHJDGASJHGDJAHJAGHSDJHGJHADSJHGAGHSJADGJGJHASDGJHGHASDGJH
+\\
 L'arena simulata riproduce il comportamento dei robot all'interno del mondo reale, comunicando con il sistema principale mediante un broker \ac{mqtt}. Questa simulazione pubblica tutte le informazioni relative alle posizioni ed orientamento all'interno di un topic.
 \begin{figure}[htp]
     \centering
@@ -471,7 +469,7 @@ Grazie a questo modulo si ha la possibilità di ottenere una texture, nel contes
 Per integrare la telecamera del dispositivo all'interno di una scena ThreeJS, è necessario aver inizializzato il renderer, successivamente bisogna abilitare il componente \texttt{xr} all'interno del renderer stesso.
 %
 \lstinputlisting[language=JavaScript,caption={Inizializzazione della scena 3D con il supporto per WebXR},label={lst:init-scene-camera}]{./listings/ar-session.js}
-Per poter ottenere l'immagine della fotocamera, è necessario specificare la feature \texttt{camera-access}, fornita dal WebXR Raw Camera Access Module.
+Per poter ottenere l'immagine della fotocamera, è necessario specificare la \textit{feature} \texttt{camera-access}, fornita dal WebXR Raw Camera Access Module.
 %
 % subsection Integrazione di una telecamera (end)
 
@@ -488,7 +486,7 @@ Fornisce i metodi necessari per effettuare la ricerca di marker ArUco appartenen
 %
 \lstinputlisting[language=JavaScript,caption={Richesta dell'immagine dalla fotocamera},label={lst:get-camera-texture}]{./listings/get-camera-image.js}
 %
-In questo caso non è possibile ottenere l'immagine della fotocamera in maniera diretta \cite{webxr_raw_camera}.
+In questo caso non è possibile ottenere l'immagine della fotocamera in maniera diretta.
 Grazie alla feature \texttt{camera-access}, è possibile ottenere una texture, contenente l'immagine della fotocamera, in un formato non elaborabile lato CPU (\texttt{WebGLTexture}).
 Tuttavia è possibile utilizzare questo specifico formato come sfondo di una scena. Per questo motivo, viene utilizzata una scena ausiliaria con lo scopo di renderizzare la texture ottenuta, per poi effettuare uno snapshot dello stato attuale della scena. Così facendo è possibile realizzare un immagine elaborabile da js-aruco2.
 Prima di utilizzarla bisogna capovolgere l'immagine: il metodo \texttt{readRenderTargetPixels} richiama il metodo di \textit{OpenGL} chiamato \texttt{glReadPixels}. Quest'ultimo inizia a leggere i pixel dall'angolo in basso a sinistra dell'immagine, mentre l'origine della finestra è posta all'angolo in alto a sinistra. Questa differenza nelle origini porta ad avere un'immagine capovolta verticalmente.
@@ -590,13 +588,14 @@ Inoltre la stima delle posizioni viene effettuata utilizzando POSIT, un'algoritm
 \\
 Questo fenomeno principalmente è causato da variazioni, anche minime, di numeri decimali durante le iterazioni dell'algoritmo.
 Per questo motivo il risultato ottenuto non è sempre preciso e uguale ad ogni avvio dell'applicativo.
-\\
-Per analizzare l'errore vengono utilizzati i seguenti elementi:
+%
+\subsubsection{Analisi dell'errore della stima}\label{sec:analisi_dell_errore_di_rilevamento} % (fold)
+Per analizzare l'errore del calcolo delle posizioni dei marker rilevati, vengono utilizzati i seguenti elementi:
 \begin{itemize}
     \item un marker reale posizionato su un piano;
     \item una telecamera fissa;
     \item uno script in JavaScript capace di catturare diversi snapshot per poi stimare le posizioni usando POSIT;
-    \item uno script in Python per calcolare la media e la varianza degli erorri registrati
+    \item uno script in Python per calcolare la media e la varianza degli erorri registrati e rappresentare i dati in un grafico
 \end{itemize}
 La telecamera inquadra il marker, fornendo l'immagine allo script JavaScript che effettua la ricerca dei marker, all'interno dell'immagine, per poi stimarnee la posizione 3D; in seguito viene registrato il \texttt{bestError}, fornito da POSIT.
 Infine i dati ottenuti vengono analizzati dallo script in Python calcolando la media e la varianza per poi rappresentarli in un diagramma degli estremi, mostrato in \Cref{fig:posit-error}.
@@ -606,15 +605,20 @@ Infine i dati ottenuti vengono analizzati dallo script in Python calcolando la m
     \caption{Variazione degli errori di POSIT}
     \label{fig:posit-error}
 \end{figure}
+\\
 Un errore elevato comporta un forte disallineamento tra la posizione reale di un marker e quella stimata nella scena, un errore minore mostrerà risultati più accurati.
+%
+% subsubsection Analisi dell'errore di rilevamento (end)
 \subsubsection{Prestazioni del riconoscimento}\label{sec:prestazioni_del_riconoscimento} % (fold)
-La fase di riconoscimento di marker all'interno di un'immagine, stima delle posizioni compresa, è un'operazione molto onerosa, come mostrato in \Cref{fig:detect-aruco}. Segue la necessità di non utilizzare un costante riconoscimento delle immagini ma di limitare il numero di volte che viene eseguito al secondo.
+Per l'analisi delle prestazioni vengono utilizzati gli stessi strumenti utilizzati per l'analisi precedente nella \cref{sec:analisi_dell_errore_di_rilevamento}.
+La fase di riconoscimento di marker all'interno di un'immagine, stima delle posizioni compresa, è un'operazione molto onerosa, come mostrato in \Cref{fig:detect-aruco}.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=.8\linewidth]{./figures/detect-test.png}
     \caption{Tempi di esecuzione per ricercare i marker in un immagine}
     \label{fig:detect-aruco}
 \end{figure}
+Segue la necessità di non utilizzare un costante riconoscimento delle immagini ma, vengono limitate il numero di volte che viene eseguito al secondo.
 % subsubsection Prestazioni del riconoscimento (end)
 %
 % section Stabilità del rilevamento dei marker (end)
@@ -690,7 +694,23 @@ Detto ciò è possibile concludere quest'analisi affermando che le prestazioni n
 % chapter Valutazione (end)
 %
 \chapter{Conclusioni e lavori futuri}\label{chap:conclusioni_e_lavori_futuri} % (fold)
-
+In questo progetto è stato implementato correttamente un sistema capace di trasformare l'arena emulata in un contesto più immersivo tramite la realtà aumentata.
+Tutti i requisiti sono stati raggiunti con alcune limitazioni, quali:
+\begin{itemize}
+    \item il rilevamento dei marker non in tempo reale a causa dell'impatto sulle prestazioni, influenzando la reattività della scena;
+    \item i corner non sono perfettamente allineati con i marker reali, a causa principalmente degli errori durante la stima delle posizioni 3D;
+\end{itemize}
+Nonostante queste limitazioni l'applicativo riesce comunque a gestire un'arena virtuale che corrisponde all'arena simulata dall'emulatore. I robot vengono posizionati correttamente sul piano dell'arena, i numerosi calcoli fra matrici, molto dispendiosi, non influenzano la fluidità del sistema aumentato e la comunicazione non ha un impatto significativo su quest'ultimo. Tutti gli studi sono stati effettuati sulla macchina locale, nel caso in cui l'applicazione venga eseguita in remoto, ovvero broker e server web non vengono eseguiti sulla stessa macchina, le traslazioni potrebbero subire un disallineamento temporale, creando un movimento non più lineare.
+% =============
+% LAVORI FUTURI
+% =============
+Partendo da questo progetto è possibile integrarlo con le seguenti funzionalità:
+\begin{itemize}
+    \item Un'implementazione più robusta e stabile del rilevatore di marker AruCo assieme ad un sistema migliorato per stimarne la posizione in una scena 3D. Oppure integrare dei meccanismi di riconoscimento di un piano per poter diminuire l'errore delle stime calcolate.
+    \item Implementare un sistema capace definire in autonomia la locazione spaziale dei corner appartenenti all'arena, attualmente definiti arbitrariamente.
+    \item Migliorare il sistema di rendering in modo da diminuire il numero di draw call velocizzando i tempi di render.
+    \item Permettere all'utente di modificare dei parametri, come l'area dell'arena simualta o la dimensione dei marker reali, prima di inizializzare la sessione in realtà aumentata.
+\end{itemize}
 % chapter Conclusioni e lavori futuri (end)
 
 %----------------------------------------------------------------------------------------
@@ -699,13 +719,17 @@ Detto ciò è possibile concludere quest'analisi affermando che le prestazioni n
 
 \backmatter
 
-\nocite{*} % Remove this as soon as you have the first citation
-
 \bibliographystyle{alpha}
 \bibliography{bibliography}
 
 \begin{acknowledgements} % this is optional
-Optional. Max 1 page.
+Vorrei ringraziare il Prof. Mirko Viroli e il Dott. Gianluca Aguzzi per avermi seguito con attenzione e disponibilità durante tutto il percorso. I loro consigli e il confronto continuo hanno reso questo lavoro più chiaro, aiutandomi a superare i momenti di incertezza e trasformando le difficoltà in occasioni di crescita.
+\\
+Un sentito grazie alla mia famiglia, per la fiducia, il supporto e la comprensione dimostrata giorno dopo giorno. Sapere di poter contare su di loro è stato prezioso, soprattutto nei momenti più intensi e impegnativi.
+\\
+Ringrazio i miei colleghi di corso, compagni di studio e di lunghe sessioni in aula: condividere appunti, dubbi e momenti di leggerezza ha reso questo percorso più leggero e piacevole.
+\\
+Infine, un grazie ai miei amici di sempre, che anche a distanza hanno saputo sostenermi e ricordarmi di mantenere l’equilibrio, nei momenti in cui il traguardo sembrava ancora lontano.
 \end{acknowledgements}
 
 \end{document}
