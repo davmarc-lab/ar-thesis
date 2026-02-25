@@ -94,7 +94,7 @@ you may need both \ac{vm} and \acp{vm}.
 \textit{Project Emerge} \cite{project-emerge} nasce con l’obiettivo di esplorare il coordinamento di uno sciame di droni riproducendo le dinamiche tipiche di un sistema distribuito reale.
 L’idea alla base del progetto è quella di osservare come un insieme di agenti autonomi, dotati di capacità computazionali e comunicative limitate, possa raggiungere comportamenti collettivi coerenti senza fare affidamento su un controllo centralizzato.
 \\
-Il progetto propone un’implementazione del nucleo logico dell’\ac{ac} \cite{ac}, adottando Scala come linguaggio di programmazione attraverso l’utilizzo del framework \ac{scafi} \cite{scafi}.
+Il progetto propone un’implementazione del nucleo logico dell’\ac{ac} \cite{ac}, adottando Scala come linguaggio di programmazione attraverso l’utilizzo del \textit{framework} \ac{scafi} \cite{scafi}.
 \ac{scafi} è una libreria, scritta in Scala, e framework per per la programmazione aggregata, che implementa una variante della semantica operazionale dell’\ac{hofc}, resa disponibile come \ac{dsl}, fornendo una piattaforma e un insieme di API per la simulazione e l’esecuzione di sistemi e applicazioni aggregate.
 Grazie all’impiego di sistemi decentralizzati, ogni elemento elabora localmente le informazioni e le condivide con i nodi vicini, superando i limiti di un approccio centralizzato, spesso non ideale in contesti dinamici.
 Applicato ad uno sciame di droni, è possibile definire obiettivi collettivi, come la copertura spaziale, formazione o esplorazione cooperativa, in modo astratto, garantendo l'adattamento automatico alle variazioni topologiche dell'ambiente circostante.
@@ -102,7 +102,7 @@ Applicato ad uno sciame di droni, è possibile definire obiettivi collettivi, co
 In seguito le simulazioni si sono trasformate in esperienze reali: sono stati realizzati dei droni fisici in grado di coordinarsi all'interno di uno sciame. Ognuno composto da microcontrollori in grado di gestire comunicazioni \textit{wireless}, monitoraggio e gestione energetica in tempo reale ed il movimento del robot, che dipende dalla velocità di entrambe le coppie di ruote motrici. 
 Tramite l'utilizzo di un'interfaccia web è possibile visualizzare lo stato di tutti i robot, controllarli individualmente ed eventualmente modificare la formazione corrente dell'interno sciame.
 \\
-Infine viene proposto un simulatore in Python, fondamentale per lo sviluppo di questa tesi, dove in mancanza robot fisici è possibile simularne l'esistenza. Permette di gestire numerevoli robot virtuali e modificarne lo stato, utilizzando appositi comandi, inviando costantemente le opportune informazioni al broker \ac{mqtt}.
+Infine viene proposto un simulatore in Python, fondamentale per lo sviluppo di questa tesi, dove in mancanza robot fisici è possibile simularne l'esistenza. Permette di gestire numerevoli robot virtuali e modificarne lo stato, utilizzando appositi comandi, inviando costantemente le opportune informazioni al \textit{broker} \ac{mqtt}.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=\linewidth]{./figures/emerge-arch.png}
@@ -123,29 +123,29 @@ Dal punto di vista tecnico, un sistema di realtà aumentata si basa su tre compo
     \item elaborazione e tracciamento spaziale per stimare la posizione e l'orientamento di oggetti reali (\textit{tracking} e \textit{pose estimation});
     \item \textit{rendering} in tempo reale degli oggetti virtuali;
 \end{itemize}
-Tecniche come il \textit{marker-based tracking}, il \textit{markerless tracking} e gli approcci basati su \ac{slam}, consentono di garantire coerenza geometrica e stabilità visiva dei contenuti aumentati.
+Tecniche come il \textit{marker-based} tracking, il \textit{markerless} tracking e gli approcci basati su \ac{slam}, consentono di garantire coerenza geometrica e stabilità visiva dei contenuti aumentati.
 \\
 Dal punto di vista concettuale, un sistema può essere definito di realtà aumentata se soddisfa tre requisiti fondamentali: combinazione di elementi reali e virtuali, interattività in tempo reale e corretta registrazione spaziale tra oggetti digitali e ambiente fisico.
 Tali caratteristiche rendono l’AR una tecnologia abilitante nell’ambito dell’interazione uomo-macchina, contribuendo allo sviluppo di interfacce sempre più immersive e contestualizzate.
 % section Realtà aumentata (end)
 
 \section{ThreeJS}\label{sec:threejs} % (fold)
-\textit{ThreeJS} \cite{threejs} è una libreria in JavaScript progettata per semplificare lo sviluppo di applicazioni di grafica tridimensionale in ambienti web. Si basa su WebGL, un’API a basso livello che consente l’accesso diretto alle funzionalità della GPU attraverso il browser.
+\textit{ThreeJS} \cite{threejs} è una libreria in JavaScript progettata per semplificare lo sviluppo di applicazioni di grafica tridimensionale in ambienti web. Si basa su WebGL, un’API a basso livello che consente l’accesso diretto alle funzionalità della GPU attraverso il \textit{browser}.
 L’utilizzo diretto di WebGL richiede una conoscenza approfondita della pipeline grafica e della programmazione tramite shader, per questo motivo ThreeJS introduce un livello di astrazione che consente di sviluppare scene tridimensionali complesse riducendo la complessità implementativa, pur mantenendo un elevato grado di flessibilità.
 \\
 %
-L’architettura di ThreeJS riflette i principali concetti della grafica computazionale tridimensionale e si basa su tre componenti fondamentali: scena, telecamera e \textit{\rd}.
+L’architettura di ThreeJS riflette i principali concetti della grafica computazionale tridimensionale e si basa su tre componenti fondamentali: scena, telecamera e \textit{renderer}.
 \\
 Una scena contiene tutti gli oggetti tridimensionali, le sorgenti luminose e gli elementi di supporto. La telecamera definisce il punto di vista dell’osservatore e può essere di tipo prospettico o ortografico, influenzando il modello di proiezione della scena sul piano di visualizzazione.
 \\
-Il \rd, generalmente \texttt{WebGLRenderer}, si occupa di eseguire la pipeline di \rding{} sfruttando le funzionalità offerte da WebGL.
+Il renderer, generalmente \texttt{WebGLRenderer}, si occupa di eseguire la pipeline di rendering sfruttando le funzionalità offerte da WebGL.
 %
 Gli oggetti rappresentati in una scena, chiamati \textit{mesh}, sono costituiti da due componenti principali:
 \begin{itemize}
     \item \textbf{Geometria}: descrive la struttura dei vertici, delle normali e delle coordinate texture.
     \item \textbf{Materiale}: definisce le proprietà visive dell’oggetto, texture e il suo comportamento rispetto alle sorgenti luminose.
 \end{itemize}
-Nel \Cref{lst:sample-threejs} viene riportata l'implementazione di una semplice scena 3D con all'interno una telecamera prospettica che inquadra un cubo che ruota nel tempo su due assi diversi, mostrata nella \Cref{fig:threejs-scene}.
+Nel \cref{lst:sample-threejs} viene riportata l'implementazione di una semplice scena 3D con all'interno una telecamera prospettica che inquadra un cubo che ruota nel tempo su due assi diversi, mostrata nella \Cref{fig:threejs-scene}.
 %
 \lstinputlisting[language=JavaScript,caption={Esempio di una scena 3D con ThreeJS},label={lst:sample-threejs}]{listings/Threejs.js}
 \begin{figure}[htp]
@@ -191,11 +191,11 @@ In questo modello sono necessari tre componenti principali, come mostrato in \Cr
 \end{figure}
 %
 Più nello specifico, ogni messaggio inviato e ricevuto viene organizzato in stringhe gerarchiche, chiamate \textit{topic}. Ogni publisher pubblica un messagio in un topic e un subscriber riceve i messaggi dai topic a cui viene sottoscritto.
-L'operazione di filtraggio dei messaggi nei relativi topic viene svolta dal \textit{broker}.
+L'operazione di filtraggio dei messaggi nei relativi topic viene svolta dal broker.
 \\
 L'architettura di \ac{mqtt} introduce diversi disaccoppiamenti tra mittenti e destinatari:
 \begin{itemize}
-    \item \textbf{Disaccoppiamento spaziale}: ogni publisher non ha la necessità di conoscere ogni subscriber (e viceversa), ognuno di essi comunica esclusivamente con il \textit{broker}.
+    \item \textbf{Disaccoppiamento spaziale}: ogni publisher non ha la necessità di conoscere ogni subscriber (e viceversa), ognuno di essi comunica esclusivamente con il broker.
     \item \textbf{Disaccoppiamento temporale}: un publisher e un subscriber non hanno la necessità di essere attivi simultaneamente per poter comunicare.
     \item \textbf{Disaccoppiamento di sincronizzazione}: le operazioni di invio e ricezione di messaggi non sono processi che interrompono il flusso di esecuzione.
 \end{itemize}
@@ -212,7 +212,7 @@ Tipicamente \ac{mqtt} instaura un canale di comunicazione bidirezionale sfruttan
 %
 Questa tesi si pone come obiettivo la realizzazione di un'applicazione web che permetta di trasformare il sistema emulato, utilizzato nella notte europea dei ricercatori, in una scena in realtà aumentata sfruttando un dispositivo dotato di una fotocamera.
 L'applicativo deve inizialmente calibrare un'arena virtuale, sfruttando la telecamera del dispositivo e quattro marker ArUco posizionati nel mondo reale.
-Una volta individuati e calcolata una stima della loro posizione all'interno di una scena 3D, devono essere disegnati i robot emulati dal sistema, all'interno dell'arena virtuale. Le informazioni relative alla posizione ed orientamento di ogni elemento vengono condivise mediante un broker \ac{mqtt} in un \textit{topic} specifico.
+Una volta individuati e calcolata una stima della loro posizione all'interno di una scena 3D, devono essere disegnati i robot emulati dal sistema, all'interno dell'arena virtuale. Le informazioni relative alla posizione ed orientamento di ogni elemento vengono condivise mediante un broker \ac{mqtt} in un topic specifico.
 %
 % section Obiettivi (end)
 %
@@ -223,7 +223,7 @@ Una volta individuati e calcolata una stima della loro posizione all'interno di 
     \item Creazione di un arena virtuale in una scena 3D, sovrapposta ai marker posizionati nel mondo reale.
     \begin{itemize}
         \item Calibrazione di un nuovo sistema di coordinate.
-        \item Posizionamento di una \textit{mesh} sul piano dell'arena.
+        \item Posizionamento di una mesh sul piano dell'arena.
     \end{itemize}
     \item Rappresentazione dei robot emulati nella scena in realtà aumentata ricevendo le informazioni dal broker \ac{mqtt}.
 \end{itemize}
@@ -286,14 +286,14 @@ Inolre utilizzano la stessa mesh con la stessa dimensione, ma rotazione e trasla
 % subsection Robot (end)
 %
 \subsection{Arena}\label{sub:arena} % (fold)
-L'arena simulata riproduce il comportamento dei robot all'interno del mondo reale, comunicando con il sistema principale mediante un broker \ac{mqtt}. Questa simulazione pubblica tutte le informazioni relative alle posizioni ed orientamento all'interno di un \textit{topic}.
+L'arena simulata riproduce il comportamento dei robot all'interno del mondo reale, comunicando con il sistema principale mediante un broker \ac{mqtt}. Questa simulazione pubblica tutte le informazioni relative alle posizioni ed orientamento all'interno di un topic.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=.4\linewidth]{./figures/analisi-arena.png}
     \caption{Diagramma delle classi dell'\texttt{Arena}}
     \label{fig:analisi-arena}
 \end{figure}
-La soluzione implementata si sottoscrive ai relativi \textit{topic} e al momento della ricezione di un messaggio, elabora i dati al suo interno per poi renderizzare i \texttt{Robot} all'interno della scena 3D.
+La soluzione implementata si sottoscrive ai relativi topic e al momento della ricezione di un messaggio, elabora i dati al suo interno per poi renderizzare i \texttt{Robot} all'interno della scena 3D.
 Uno dei problemi principali analizzati riguarda la differenza di sistema di coordinate di entrambe le arene: l'arena simulata non corrisponde all'arena virtuale nella scena, quindi una posizione nel sistema simulato, se utilizzata all'interno della scena senza alcuna manipolazione, comporta a posizionamenti errati all'interno della scena.
 Il posizionamento dei robot deve essere effettuato all'interno di un'area precisamente delimitata nella scena, nasce la necessità di adattare le posizioni relative ricevute nel sistema di coordinate corrente.
 Oltre a questa trasformazione, si aggrega la trasformazione dalle coordinate relative all'arena al \ac{wcs}.
@@ -306,7 +306,7 @@ Oltre a questa trasformazione, si aggrega la trasformazione dalle coordinate rel
 % La comunicazione con il sistema emulato è un'aspetto fondamentale per lo sviluppo di questo progetto. Il broker \ac{mqtt} costituisce il nodo centrale della comunicazione, consentendo lo scambio in tempo reale di dati, comandi e stati tra i diversi componenti.
 % Tale architettura garantisce la sincronizzazione fra i due sistemi senza richiedere connessioni dirette tra ogni modulo, semplificando la gestione del sistema e favorendo l’integrazione di ulteriori componenti.
 % \\
-% Grazie ad \ac{mqtt}, la soluzione proposta è facilmente integrabile al sistema reale con i dispositivi fisici. Nel progetto \textit{Project-Emerge} il sistema interagisce con il broker come publisher, inviando i dati relativi alle posizioni dei robot nel tempo, mentre in questo progetto la comunicazione si concentra nella ricezione e nell'elaborazione dei dati ricevuti.
+% Grazie ad \ac{mqtt}, la soluzione proposta è facilmente integrabile al sistema reale con i dispositivi fisici. Nel progetto Project-Emerge il sistema interagisce con il broker come publisher, inviando i dati relativi alle posizioni dei robot nel tempo, mentre in questo progetto la comunicazione si concentra nella ricezione e nell'elaborazione dei dati ricevuti.
 % %
 % % subsection Broker MQTT (end)
 %
@@ -330,7 +330,7 @@ Ciò garantisce la fluidità dell'applicativo in fase di calibrazione, ma porta 
     \caption{Diagramma delle classi di \texttt{Marker}}
     \label{fig:diag-marker}
 \end{figure}
-Viene utilizzata una classe di supporto, chiamata \texttt{Marker}, per tenere traccia di tutti i marker trovati e le loro informazioni relative alla \texttt{pose}. La \texttt{pose} è un oggetto, generato dalla libreria \textit{posit2} integrata con \textit{js-aruco2}, contenente i seguenti parametri:
+Viene utilizzata una classe di supporto, chiamata \texttt{Marker}, per tenere traccia di tutti i marker trovati e le loro informazioni relative alla \texttt{pose}. La \texttt{pose} è un oggetto, generato dalla libreria \textit{posit2} integrata con \textit{js-aruco2} \cite{js_aruco2}, contenente i seguenti parametri:
 \begin{itemize}
     \item \textbf{error}: un valore relativo all'errore stimato del risultato;
     \item \textbf{translation}: un vettore di traslazione 3D;
@@ -378,7 +378,7 @@ Per permettere la traslazione dei robot nel nuovo sistema di riferimento, bisogn
 Qui entra in gioco la \texttt{Location} di ogni \texttt{Corner}: data la posizione di due \texttt{Corner}, il vettore normalizzato della differenza fra le posizioni definisce un asse dell'arena.
 \\
 Per l'asse verticale si prendono in considerazione due angoli che si trovano entrambi a destra o a sinistra (ad esempio \texttt{TOP\_LEFT} e \texttt{BOT\_LEFT}). Il vettore risultante avrà il verso che punta all'angolo superiore.
-Mentre per l'asse orizzontale si prendono in considerazione due corner che si trovano, idealmente, sulla parte inferiore oppure sulla parte superiore (ad esempio \texttt{TOP\_LEFT} e \texttt{TOP\_RIGHT}).
+Mentre per l'asse orizzontale si prendono in considerazione due \textit{corner} che si trovano, idealmente, sulla parte inferiore oppure sulla parte superiore (ad esempio \texttt{TOP\_LEFT} e \texttt{TOP\_RIGHT}).
 %
 % subsubsection Calcolo degli assi di riferimento (end)
 %
@@ -388,7 +388,7 @@ Mentre per l'asse orizzontale si prendono in considerazione due corner che si tr
 %
 La comunicazione con un broker \ac{mqtt} deve avvenire utilizzando una connessione sicura, in quanto il contesto dell'applicativo è sviluppato con il protocollo HTTPS.
 È essenziale che la comunicazione con il broker avvenga attraverso un canale sicuro, come ad esempio \textit{TLS/SSL}, al fine di proteggere le informazioni da intercettazioni o manomissioni e garantire l’integrità dei dati scambiati.
-Soltanto in un ambiente sicuro, il \textit{browser} potrà permettere la comunicazione con quest'ultimo.
+Soltanto in un ambiente sicuro, il rowser potrà permettere la comunicazione con quest'ultimo.
 \\
 Viene implementata la classe \texttt{MQTTClient}, che permette di connettersi ad un broker, sottoscriversi ai topic, ed eseguire delle operazioni specifiche quando un messaggio viene ricevuto.
 \begin{figure}[htp]
@@ -399,14 +399,14 @@ Viene implementata la classe \texttt{MQTTClient}, che permette di connettersi ad
 \end{figure}
 %
 \subsubsection{Gestione dei Robot emulati}\label{sec:gestione_dei_robot_emulati} % (fold)
-Le informazioni ricevute dal broker, in formato \textit{JSON}, vengono memorizzate all'interno della classe \texttt{Robot}.
+Le informazioni ricevute dal broker, in formato \textit{json}, vengono memorizzate all'interno della classe \texttt{Robot}.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=.4\linewidth]{./figures/diag-robot.png}
     \caption{Diagramma delle classi del \texttt{Robot}}
     \label{fig:diag-robot}
 \end{figure}
-Siccome tutti i robot utilizzano lo stesso modello di base, esso viene caricato una volta sola e, ogni volta che viene aggiunto un robot, viene creata una nuova copia con un nuovo identificativo nella scena di \textit{ThreeJS}.
+Siccome tutti i robot utilizzano lo stesso modello di base, esso viene caricato una volta sola e, ogni volta che viene aggiunto un robot, viene creata una nuova copia con un nuovo identificativo nella scena di ThreeJS.
 Per ogni robot non è necessario tenere traccia delle posizioni relative all'emulatore: infatti ogni posizione viene convertita nel nuovo sistema di coordinate prima di creare un'istanza di questa classe.
 % subsubsection Gestione dei Robot emulati (end)
 %
@@ -414,17 +414,17 @@ Per ogni robot non è necessario tenere traccia delle posizioni relative all'emu
 %
 \subsection{Posizionamento e orientamento dei robot}\label{sub:posizionamento_e_orientamento_dei_robot} % (fold)
 Il posizionamento dell'arena virtuale non è sempre lo stesso, perciò non è possibile definire un posizionamento statico dei \texttt{Robot}.
-A causa del posizionamento dinamico si ha la necessità di allineare arbitrariamente la \textit{mesh}. In particolare la base della mesh, contenente le ruote dei robot, deve essere posizionata sul piano virtuale dell'arena.
+A causa del posizionamento dinamico si ha la necessità di allineare arbitrariamente la mesh. In particolare la base della mesh, contenente le ruote dei robot, deve essere posizionata sul piano virtuale dell'arena.
 Geometricamente il vettore normale della base deve avere stessa direzione ma verso opposto rispetto al vettore normale del piano dell'arena.
-In questa soluzione viene proposto un orientamento sfruttando le matrici di trasformazione della \textit{mesh} e quella dell'arena: data la matrice di trasformazione iniziale $M_i$, si può dire che moltiplicando questa matrice per una matrice di rotazione $R$, si ottiene la matrice di trasformazione finale $M_f$.
+In questa soluzione viene proposto un orientamento sfruttando le matrici di trasformazione della mesh e quella dell'arena: data la matrice di trasformazione iniziale $M_i$, si può dire che moltiplicando questa matrice per una matrice di rotazione $R$, si ottiene la matrice di trasformazione finale $M_f$.
 \[
     M_f = M_i \cdot R
 \]
-In questo caso la matrice $M_i$ rappresenta la matrice di trasformazione della \textit{mesh}, mentre la matrice $M_f$ rappresenta quella dell'arena. Trovando la matrice $R$ è possibile applicare le opportune trasformazioni per orientare corretamente una \textit{mesh} sul piano dell'arena.
+In questo caso la matrice $M_i$ rappresenta la matrice di trasformazione della mesh, mentre la matrice $M_f$ rappresenta quella dell'arena. Trovando la matrice $R$ è possibile applicare le opportune trasformazioni per orientare corretamente una mesh sul piano dell'arena.
 \[
     R = M_f / M_i = M_f \cdot M_i^{-1}
 \]
-La matrice dell'arena viene ricavata utilizzando gli assi calcolati dopo la calibrazione, invece la matrice dei \texttt{Robot} viene definita in maniera statica. Analizzando la \textit{mesh} del robot, si determinano i vettori delle normali nello spazio di coordinate del mondo. In particolare bisogna definire il vettore normale della base, della parte frontale e del lato destro della \textit{mesh} (destro perchè viene utilizzato un sistema di coordinate che segue le regole della mano destra).
+La matrice dell'arena viene ricavata utilizzando gli assi calcolati dopo la calibrazione, invece la matrice dei \texttt{Robot} viene definita in maniera statica. Analizzando la mesh del robot, si determinano i vettori delle normali nello spazio di coordinate del mondo. In particolare bisogna definire il vettore normale della base, della parte frontale e del lato destro della mesh (destro perchè viene utilizzato un sistema di coordinate che segue le regole della mano destra).
 \\
 Per quanto riguarda l'orientamento dei robot, viene utilizzato l'asse $y$ dell'arena come asse di rotazione, in modo da rispettare quello del simulatore. La rotazione, ogni volta che deve essere aggiornata, viene sommata o sottratta a quella corrente.
 
@@ -438,7 +438,7 @@ Per poter muovere i robot all'interno dell'arena, bisogna calcolare la loro posi
     \caption{Diagramma delle classi parziale: \texttt{Arena} e movimento dei \texttt{Robot}}
     \label{fig:diag-robot-movement}
 \end{figure}
-La classe \texttt{Arena} implementa un metodo che converte le coordinate relative date in coordinate del mondo, permettendo una corretta traslazione delle \textit{mesh}.
+La classe \texttt{Arena} implementa un metodo che converte le coordinate relative date in coordinate del mondo, permettendo una corretta traslazione delle mesh.
 Questo metodo sfrutterà sia l'origine che gli assi dell'arena: l'origine definisce il punto in cui tutte le traslazione devono iniziare, mentre gli assi indicano le direzioni su cui devono essere effettuate.
 Non è sufficiente sommare le coordinate di una posizione relativa alle coordinate dell'origine, in quanto tutte le traslazioni avvengo nel \ac{wcs}: supponendo di effettuare una traslazione lungo l'asse $x$ del mondo, non si ha alcuna certezza che corrisponda a quella corretta nel piano dell'arena.
 In questo caso gli assi del mondo e dell'arena non corrispondono; utilizzando direttamente gli assi dell'arena il problema non si presenta in alcuna situazione.
@@ -468,7 +468,7 @@ Tuttavia, WebXR categorizza l'immagine delle telacamera, ed altre informazioni n
 Inoltre per ottenere l'immagine stessa durante una sessione XR, utilizzando il modulo aggiuntivo \textit{WebXR Raw Camera Access Module} \cite{webxr_raw_camera}.
 Grazie a questo modulo si ha la possibilità di ottenere una texture, nel contesto di WebGL, rappresentante l'immagine della fotocamera in uno specifico \texttt{XRFrame}, durante l'esecuzione di una \texttt{XRSession}.
 \subsection{Integrazione di una telecamera}\label{sub:impl_integrazione_di_una_telecamera} % (fold)
-Per integrare la telecamera del dispositivo all'interno di una scena ThreeJS, è necessario aver inizializzato il \rd, successivamente bisogna abilitare il componente \texttt{xr} all'interno del \rd{} stesso.
+Per integrare la telecamera del dispositivo all'interno di una scena ThreeJS, è necessario aver inizializzato il renderer, successivamente bisogna abilitare il componente \texttt{xr} all'interno del renderer stesso.
 %
 \lstinputlisting[language=JavaScript,caption={Inizializzazione della scena 3D con il supporto per WebXR},label={lst:init-scene-camera}]{./listings/ar-session.js}
 Per poter ottenere l'immagine della fotocamera, è necessario specificare la feature \texttt{camera-access}, fornita dal WebXR Raw Camera Access Module.
@@ -480,29 +480,29 @@ Per poter ottenere l'immagine della fotocamera, è necessario specificare la fea
 \section{Marker Detection e Pose Estimation}\label{sec:impl_marker_detection_e_pose_estimation} % (fold)
 %
 \subsection{Ricerca dei marker}\label{sub:impl_ricerca_dei_marker} % (fold)
-Per ricercare all'interno di un'immagine i marker ArUco viene utilizzata la libreria \textit{js-aruco2} \cite{js_aruco2}.
+Per ricercare all'interno di un'immagine i marker ArUco viene utilizzata la libreria js-aruco2.
 Questa l'libreria analizza i dati di un immagine e attraverso algoritmi e tecniche di Visione Artificiale, trovando la posizione dei marker ArUco di un dizionario specifico, all'interno dell'immagine data.
 Inoltre offre delle tecniche per stimare la posizione dei marker in uno spazio tridimensionale.
 \\
-Fornisce i metodi necessari per effettuare la ricerca di marker ArUco appartenenti ad un dizionario specifico, partendo da un'immagine (solitamente ottenuta da un \texttt{canvas}).
+Fornisce i metodi necessari per effettuare la ricerca di marker ArUco appartenenti ad un dizionario specifico, partendo da un'immagine (solitamente ottenuta da un \textit{canvas}).
 %
 \lstinputlisting[language=JavaScript,caption={Richesta dell'immagine dalla fotocamera},label={lst:get-camera-texture}]{./listings/get-camera-image.js}
 %
 In questo caso non è possibile ottenere l'immagine della fotocamera in maniera diretta \cite{webxr_raw_camera}.
 Grazie alla feature \texttt{camera-access}, è possibile ottenere una texture, contenente l'immagine della fotocamera, in un formato non elaborabile lato CPU (\texttt{WebGLTexture}).
-Tuttavia è possibile utilizzare questo specifico formato come sfondo di una scena. Per questo motivo, viene utilizzata una scena ausiliaria con lo scopo di renderizzare la texture ottenuta, per poi effettuare uno snapshot dello stato attuale della scena. Così facendo è possibile realizzare un immagine elaborabile da \textit{js-aruco2}.
+Tuttavia è possibile utilizzare questo specifico formato come sfondo di una scena. Per questo motivo, viene utilizzata una scena ausiliaria con lo scopo di renderizzare la texture ottenuta, per poi effettuare uno snapshot dello stato attuale della scena. Così facendo è possibile realizzare un immagine elaborabile da js-aruco2.
 Prima di utilizzarla bisogna capovolgere l'immagine: il metodo \texttt{readRenderTargetPixels} richiama il metodo di \textit{OpenGL} chiamato \texttt{glReadPixels}. Quest'ultimo inizia a leggere i pixel dall'angolo in basso a sinistra dell'immagine, mentre l'origine della finestra è posta all'angolo in alto a sinistra. Questa differenza nelle origini porta ad avere un'immagine capovolta verticalmente.
 Il metodo \texttt{flipImageVertically} analizza metà dell'immagine, partendo dall'alto, e ad ogni iterazione scambia la riga corrente con la rispettiva riga dal fondo.
 \lstinputlisting[language=JavaScript,caption={Snapshot della scena di supporto per ottenere un immagine elaborabile},label={lst:snapshot-camera-scene}]{./listings/scene-snapshot.js}
 %
-Una volta ottenuta l'immagine viene processata da \textit{js-aruco2}, ottenendo le posizioni dei marker in coordinate 2D.
+Una volta ottenuta l'immagine viene processata da js-aruco2, ottenendo le posizioni dei marker in coordinate 2D.
 \lstinputlisting[language=JavaScript,caption={Ricerca dei marker ArUco},label={lst:find-markers}]{./listings/find-markers.js}
 % subsection Ricerca dei marker (end)
 
 \subsection{Stima delle posizioni}\label{sub:impl_stima_delle_posizioni} % (fold)
-La stima delle posizioni viene calcolata sfruttando la libreria \textit{posit2}, fornita da \textit{js-aruco2}.
+La stima delle posizioni viene calcolata sfruttando la libreria posit2, fornita da js-aruco2.
 La quale all'interno calibra una telecamera virtuale, conoscendo la larghezza dell'elemento \textit{HTML} dove viene renderizzata la scena e la grandezza dei marker ArUco reali, per poter trasformare le coordinate nello spazio dello schermo in coordinate della scena.
-Per poter ottenere dei risultati attendibili, è necessario centrare le coordinate 2D dei \textit{corner} trovati nella sezione \cref{sub:impl_ricerca_dei_marker}, all'interno del \textit{canvas}.
+Per poter ottenere dei risultati attendibili, è necessario centrare le coordinate 2D dei corner trovati nella sezione \cref{sub:impl_ricerca_dei_marker}, all'interno del canvas.
 %
 \lstinputlisting[language=JavaScript,caption={Stima delle posizioni dei marker in uno spazio 3D},label={lst:estimate-marker-pos}]{./listings/estimate-position.js}
 Vengono tracciati tutti i marker, con \texttt{Id} unico, che successivamente, dopo le opportune manipolazioni, verranno utilizzati per la creazione dell'arena virtuale.
@@ -536,7 +536,7 @@ Inoltre viene anche calcolato un terzo asse, calcolando il prodotto vettoriale t
 \[
     z = x \times y
 \]
-Quest'ultimo asse può essere considerato come il vettore normale della superficie dell'arena; in seguito verrà utilizzato per orientare correttamente la \textit{mesh} dei robot sulla superficie stessa.
+Quest'ultimo asse può essere considerato come il vettore normale della superficie dell'arena; in seguito verrà utilizzato per orientare correttamente la mesh dei robot sulla superficie stessa.
 %
 % subsubsection Definizione degli assi (end)
 %
@@ -554,18 +554,18 @@ $$
 Dove $xSize$ e $ySize$ rappresentano rispettivamente la metà della lunghezza di due lati consecutivi dell'arena, mentre $simulatedSize$ è la dimensione del mondo dell'arena simulata.
 %
 \lstinputlisting[language=JavaScript,caption={Operazioni eseguite alla ricezione di ogni messaggio},label={lst:broker-message}]{./listings/broker-message.js}
-All'interno del \Cref{lst:broker-message} sopra mostrato, si nota come vengono definite le operazioni da eseguire quando viene ricevuto un messaggio: ogni volta che il client riceve un messaggio emette il segnale \texttt{message}, mentre nel programma principale vengono definite le istruzioni da eseguire ogni volta che il segnale viene emesso.
+All'interno del \cref{lst:broker-message} sopra mostrato, si nota come vengono definite le operazioni da eseguire quando viene ricevuto un messaggio: ogni volta che il client riceve un messaggio emette il segnale \texttt{message}, mentre nel programma principale vengono definite le istruzioni da eseguire ogni volta che il segnale viene emesso.
 %
 % subsection Comunicazione con il broker (end)
 
 \subsection{Posizionamento e orientamento}\label{sub:posizionamento_e_orientamento} % (fold)
-A questo punto viene calcolata la matrice di trasformazione per poter allineare la \textit{mesh} con il piano dell'arena. Si calcolano le matrici di trasformazione sia iniziale, della \textit{mesh}, che finale, corrispondente al piano dell'arena.
-Nel sistema di coordinate della \textit{mesh}, il vettore normale del robot corrisponde all'asse delle $y$ avente verso opposto, per questo motivo, nella matrice di trasformazione finale, \texttt{tb}, vengono scambiati l'asse $z$ e l'asse $y$. Infatti la base della \textit{mesh} deve posizionarsi nella stessa direzione della normale dell'arena (asse $z$). Inoltre lo stesso asse $z$ viene negato per permettere alla base di posizionarsi correttamente.
-Calcolate le due matrici, si effettua un prodotto tra quella finale (di arrivo), e l'inversa di quella iniziale, così da ottenere la matrice di rotazione da applicare alla \textit{mesh}.
+A questo punto viene calcolata la matrice di trasformazione per poter allineare la mesh con il piano dell'arena. Si calcolano le matrici di trasformazione sia iniziale, della mesh, che finale, corrispondente al piano dell'arena.
+Nel sistema di coordinate della mesh, il vettore normale del robot corrisponde all'asse delle $y$ avente verso opposto, per questo motivo, nella matrice di trasformazione finale, \texttt{tb}, vengono scambiati l'asse $z$ e l'asse $y$. Infatti la base della mesh deve posizionarsi nella stessa direzione della normale dell'arena (asse $z$). Inoltre lo stesso asse $z$ viene negato per permettere alla base di posizionarsi correttamente.
+Calcolate le due matrici, si effettua un prodotto tra quella finale (di arrivo), e l'inversa di quella iniziale, così da ottenere la matrice di rotazione da applicare alla mesh.
 \lstinputlisting[language=JavaScript,caption={Posizionamento della mesh sull'arena virtuale},label={lst:pose-robot}]{./listings/pose-robot.js}
 %
-Per quanto riguarda l'orientamento dei \textit{Robot}, bisogna tenere traccia dell'orientamento precedente per poter calcolare un \textit{offset}, da utilizzare per effettuare la rotazione locale della \textit{mesh}.
-Nel caso in cui si ruotasse la \textit{mesh} reimpostando la rotazione, si perderebbe il posizionamento sull'arena, in quanto la matrice di rotazione calcolata precedentemente verrebbe sovrascritta da una nuova.
+Per quanto riguarda l'orientamento dei \texttt{Robot}, bisogna tenere traccia dell'orientamento precedente per poter calcolare un \textit{offset}, da utilizzare per effettuare la rotazione locale della mesh.
+Nel caso in cui si ruotasse la mesh reimpostando la rotazione, si perderebbe il posizionamento sull'arena, in quanto la matrice di rotazione calcolata precedentemente verrebbe sovrascritta da una nuova.
 Per questo motivo, dopo aver calcolato la differenza fra l'orientamento precedente e quello attuale, si utilizza il metodo \texttt{rotateOnAxis}, che permette di calcolare una rotazione rispetto ad un asse sommandola alla rotazione corrente di un \texttt{Object3D}. Infine si aggiorna l'orientamento attuale del \texttt{Robot} con il nuovo valore.
 \lstinputlisting[language=JavaScript,caption={Rotazione del robot all'interno dell'arena},label={lst:orient-robot}]{./listings/orient-robot.js}
 % subsection Posizionamento e orientamento (end)
@@ -586,7 +586,7 @@ Sono state analizzate delle situazioni specifiche per ogni test affrontato, even
 %
 \section{Stabilità del rilevamento dei marker}\label{sec:stabilita_del_rilevamento_dei_marker} % (fold)
 Il riconoscimento e il calcolo delle posizioni dei marker reali è un punto fondamentale per il corretto funzionamento dell'applicazione. I problemi che possono verificarsi sono numerosi: l'illuminazione può creare degli artefatti durante l'analisi dell'immagine portando ad un mancato tracciamento di un marker, come anche analizzando un immagine non perfettamente nitida.
-Inoltre la stima delle posizioni viene effettuata utilizzando \textit{POSIT}, un'algoritmo iterativo e approssimato della posizione reale, perciò valutando gli stessi dati iniziali più volte è possibile ottenere risultati differenti.
+Inoltre la stima delle posizioni viene effettuata utilizzando POSIT, un'algoritmo iterativo e approssimato della posizione reale, perciò valutando gli stessi dati iniziali più volte è possibile ottenere risultati differenti.
 \\
 Questo fenomeno principalmente è causato da variazioni, anche minime, di numeri decimali durante le iterazioni dell'algoritmo.
 Per questo motivo il risultato ottenuto non è sempre preciso e uguale ad ogni avvio dell'applicativo.
