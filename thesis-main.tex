@@ -150,9 +150,20 @@ Gli oggetti rappresentati in una scena, chiamati \textit{mesh}, sono costituiti 
     \label{fig:threejs-scene}
 \end{figure}
 %
-Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard WebXR, un’API che consente la realizzazione di applicazioni di \acl{vr} e \acl{ar} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’API WebXR.
+Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard \textit{WebXR} \cite{webxr}, un’API che consente la realizzazione di applicazioni di \acl{vr} e \acl{ar} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’API WebXR.
 %
 Attraverso l’utilizzo di componenti dedicati, è possibile creare ambienti immersivi tridimensionali in cui la scena viene renderizzata in modo stereoscopico e aggiornata in funzione dei movimenti dell’utente. L’integrazione con WebXR permette inoltre di gestire input avanzati, come controller e sistemi di tracciamento.
+%
+\subsection{WebXR}\label{sub:webxr} % (fold)
+WebXR rappresenta un’evoluzione significativa nel web, consentendo l’accesso diretto ad esperienze di realtà virtuale e aumentata attraverso il browser. Tuttavia, questa tecnologia comporta dei rischi elevati se la sicurezza dell'utente non viene gestita correttamente.
+\\
+La WebXR Device API permette di interagire con numerevoli componenti e sensori avanzati come accelerometri, giroscopi, fotocamere e microfoni, e persino dispositivi di input specializzati.
+Alcune funzionalità non possono essere utilizzate se la connessione non è sicura o se la pagina non è in un contesto \textit{trusted}, proprio per evitare che contenuti malevoli possano compromettere la privacy o la sicurezza del dispositivo.
+\\
+Per prevenire l'intercettazione o la manipolazione delle informazioni sensibili, tutte le sessioni WebXR devono essere servite tramite connessioni sicure \textit{HTTPS}. Si basa su \ac{tls}, garantendo la codifica \textit{end-to-end} dei dati tra client e server, l'autenticità del sito web e l'integrità dei contenuti, impedendo attacchi di tipo \textit{man-in-the-middle} o \textit{spoofing}.
+\\
+Il browser non permette l’inizializzazione di sessioni immersive su pagine non sicure e interrompe l'esecuzione di operazioni non approvate dall’utente. Quest'ultime riprendono la normale esecuzione nel momento in cui l'utente acconsente all’accesso agli eventuali sensori e dati sensibili condivisi.
+% subsection WebXR (end)
 %
 % section ThreeJS (end)
 %
@@ -284,14 +295,6 @@ Oltre a questa trasformazione, si aggrega la trasformazione dalle coordinate rel
 % subsection Arena (end)
 %
 % \subsection{WebXR e HTTPS}\label{sub:webxr_e_https} % (fold)
-% WebXR rappresenta un’evoluzione significativa nel web, consentendo l’accesso diretto ad esperienze di realtà virtuale e aumentata attraverso il browser. Tuttavia, questa tecnologia comporta dei rischi elevati se la sicurezza dell'utente non viene gestita correttamente.
-% \\
-% La WebXR Device API permette di interagire con numerevoli componenti e sensori avanzati come accelerometri, giroscopi, fotocamere e microfoni, e persino dispositivi di input specializzati.
-% Alcune funzionalità, come l’uso di \texttt{immersive-ar} o \texttt{immersive-vr}, non possono essere attivate se la connessione non è sicura o se la pagina non è in un contesto \textit{trusted}, proprio per evitare che contenuti malevoli possano compromettere la privacy o la sicurezza del dispositivo.
-% \\
-% Per prevenire l'intercettazione o la manipolazione delle informazioni sensibili, tutte le sessioni WebXR devono essere servite tramite connessioni sicure HTTPS. Si basa su \ac{tls}, garantendo la codifica \textit{end-to-end} dei dati tra client e server, l'autenticità del sito web e l'integrità dei contenuti, impedendo attacchi di tipo \textit{man-in-the-middle} o \textit{spoofing}.
-% \\
-% Il browser non permette l’inizializzazione di sessioni immersive su pagine non sicure e interrompe l'esecuzione di operazioni non approvate dall’utente. Quest'ultime riprendono la normale esecuzione nel momento in cui l'utente acconsente all’accesso agli eventuali sensori e dati sensibili condivisi.
 % % subsection WebXR e HTTPS (end)
 %
 % \subsection{Broker MQTT}\label{sub:broker_mqtt} % (fold)
@@ -378,7 +381,7 @@ Mentre per l'asse orizzontale si prendono in considerazione due corner che si tr
 %
 \subsection{Comunicazione con il broker MQTT}\label{sub:comunicazione_con_il_broker_mqtt} % (fold)
 %
-La comunicazione con un broker \ac{mqtt} deve avvenire utilizzando una connessione sicura, in quanto il contesto dell'applicativo è sviluppato con il protocollo \textit{HTTPS}.
+La comunicazione con un broker \ac{mqtt} deve avvenire utilizzando una connessione sicura, in quanto il contesto dell'applicativo è sviluppato con il protocollo HTTPS.
 È essenziale che la comunicazione con il broker avvenga attraverso un canale sicuro, come ad esempio \textit{TLS/SSL}, al fine di proteggere le informazioni da intercettazioni o manomissioni e garantire l’integrità dei dati scambiati.
 Soltanto in un ambiente sicuro, il \textit{browser} potrà permettere la comunicazione con quest'ultimo.
 \\
@@ -599,13 +602,22 @@ Infine i dati ottenuti vengono analizzati dallo script in Python calcolando la m
     \label{fig:posit-error}
 \end{figure}
 Un errore elevato comporta un forte disallineamento tra la posizione reale di un marker e quella stimata nella scena, un errore minore mostrerà risultati più accurati.
+\subsubsection{Prestazioni del riconoscimento}\label{sec:prestazioni_del_riconoscimento} % (fold)
+La fase di riconoscimento di marker all'interno di un'immagine, stima delle posizioni compresa, è un'operazione molto onerosa, come mostrato in \Cref{fig:detect-aruco}. Segue la necessità di non utilizzare un costante riconoscimento delle immagini ma di limitare il numero di volte che viene eseguito al secondo.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=.8\linewidth]{./figures/detect-test.png}
+    \caption{Tempi di esecuzione per ricercare i marker in un immagine}
+    \label{fig:detect-aruco}
+\end{figure}
+% subsubsection Prestazioni del riconoscimento (end)
 %
 % section Stabilità del rilevamento dei marker (end)
 \section{Gestione delle comunicazioni}\label{sec:gestione_delle_comunicazioni} % (fold)
 La comunicazione con il broker viene impiegata esclusivamente per ottenere i dati relativi alla posizione di ogni robot emulato. Ad ogni messaggio ricevuto il sistema assegna le nuove posizioni, convertite nel sistema di coordinate corrente, ed aggiunge eventuali robot se non sono presenti all'interno della scena.
 Nel caso in cui la connessione viene persa, quindi il client \ac{mqtt} non riesce a comunicare con il broker, il sistema entra in fase di riconnessione. In questo periodo l'applicativo non viene interrotto ma ritenta la connesione al broker costantemente dopo un'intervallo di tempo specifico. Tuttavia l'arena, non ricevendo più messaggi, smette di aggiornare le posizioni dei robot ma non impedisce all'utente di muoversi liberamente all'interno. In questo modo viene garantito un funzionamento, anche se minimale, dell'applicativo.
 Inoltre, una volta che la connessione viene ristabilita, il sistema torna al suo normale funzionamento.
-Per avvisare l'utente in queste situazioni critiche, come mostrato nelle immagini successive, viene implementata un'interfaccia grafica aggiuntiva che visualizza lo stato attuale della connessione: ``connesso", ``disconnesso", ``riconnessione".
+Per avvisare l'utente in queste situazioni critiche, come mostrato nella \Cref{fig:mqtt-status}, viene implementata un'interfaccia grafica aggiuntiva che visualizza lo stato attuale della connessione: ``connesso", ``disconnesso", ``riconnessione".
 \begin{figure}[htp]
     \centering
     \begin{subfigure}{.3\linewidth}
@@ -631,6 +643,7 @@ Per avvisare l'utente in queste situazioni critiche, come mostrato nelle immagin
         \label{fig:mqtt-disconnected}
     \end{subfigure}
     \caption{Stato della connessione con il broker}
+    \label{fig:mqtt-status}
 \end{figure}
 %
 % section Gestione delle comunicazioni (end)
@@ -644,25 +657,33 @@ Nei test eseguiti i limiti dell'arena vengono rappresentati come cubi all'intern
 In questo paragrafo viene analizzata la stabilità dell'applicativo analizzando le prestazioni gestendo numerosi robot nello stesso momento.
 Vengono presi in cosiderazione i tempi impiegati sia per renderizzare tutti i robot, sia il tempo impiegato ad aggiornare tutte le posizioni. Sono stati implementati degli script in Python che permettono di inviare dei mesassaggi al broker, che verranno elaborati dall'emulatore per spostare i robot nel mondo emulato.
 \\
-Di seguito viene riportato il grafico contenente l'analisi dei tempi di esecuzione della fase di rendering, in una scena statica. L'esecuzione, in una fase statica senza movimenti, rimane fluida fino al raggiungimento di circa $50$ robot nello stesso momento.
+In \Cref{fig:render-times} viene riportato il grafico che mostra l'analisi dei tempi di esecuzione durante la fase di rendering in una scena statica. L'esecuzione rimane fluida fino al raggiungimento di circa $50$ robot nello stesso momento.
+Il tempo impiegato non solo dipende dalla qualità della mesh utilizzata, ma soprattutto dal numero elevato di \textit{draw call} che ThreeJS deve effettuare ogni frame.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=.8\linewidth]{./figures/render-times.png}
     \caption{Grafico dei tempi di render senza movimento}
     \label{fig:render-times}
 \end{figure}
-
+\subsubsection{Impatto della comunicazione}\label{sec:impatto_della_comunicazione} % (fold)
+Per analizzare i tempi di ricezione ed elaborazione dei messaggi sono stati effettuati dei test con un numero elevato di robot simulati, nonostante ciò il tempo di esecuzione rimaneva molto basso, senza influenzare le prestazioni del sistema.
+Lo stesso vale durante la fase di movimento dei robot: siccome le operazioni da eseguire sono le stesse, queste non influenzano il normale funzionamento dell'applicativo.
+%
+% subsubsection Impatto della comunicazione (end)
+%
+\\
+Per analizzare i tempi di ricezione ed elaborazione dei messaggi sono stati effettuati dei test con un numero elevato di robot simulati, nonostante ciò il tempo di esecuzione rimaneva molto basso, senza influenzare le prestazioni del sistema.
+Lo stesso vale durante la fase di movimento dei robot: siccome le operazioni da eseguire sono le stesse, queste non influenzano il normale funzionamento dell'applicativo.
+Detto ciò è possibile concludere quest'analisi affermando che le prestazioni non sono influenzate dall'elaborazione dei messaggi ricevuti dall'emulatore, ma dipendono principalmente da due operazioni:
+\begin{itemize}
+    \item l'analisi del contenuto di un'immagine per ricercare i marker e l'eventuale stima delle posizioni;
+    \item il numero di mesh renderizzate all'interno della scena nello stesso istante.
+\end{itemize}
 %
 % section Stabilità del sistema (end)
-
-\begin{itemize}
-    \item accuratezza delle posizioni stimate
-    \item gestione di eventuali marker duplicati
-    \item connessione con mqtt e gestione dei messaggi
-    \item prestazioni con elevati droni
-\end{itemize}
+%
 % chapter Valutazione (end)
-
+%
 \chapter{Conclusioni e lavori futuri}\label{chap:conclusioni_e_lavori_futuri} % (fold)
 
 % chapter Conclusioni e lavori futuri (end)
