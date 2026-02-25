@@ -103,6 +103,12 @@ In seguito le simulazioni si sono trasformate in esperienze reali: sono stati re
 Tramite l'utilizzo di un'interfaccia web è possibile visualizzare lo stato di tutti i robot, controllarli individualmente ed eventualmente modificare la formazione corrente dell'interno sciame.
 \\
 Infine viene proposto un simulatore in Python, fondamentale per lo sviluppo di questa tesi, dove in mancanza robot fisici è possibile simularne l'esistenza. Permette di gestire numerevoli robot virtuali e modificarne lo stato, utilizzando appositi comandi, inviando costantemente le opportune informazioni al broker \ac{mqtt}.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=\linewidth]{./figures/emerge-arch.png}
+    \caption{Struttura di Project Emerge}
+    \label{fig:emerge-arch}
+\end{figure}
 %
 % section Project Emerge (end)
 
@@ -139,14 +145,13 @@ Gli oggetti rappresentati in una scena, chiamati \textit{mesh}, sono costituiti 
     \item \textbf{Geometria}: descrive la struttura dei vertici, delle normali e delle coordinate texture.
     \item \textbf{Materiale}: definisce le proprietà visive dell’oggetto, texture e il suo comportamento rispetto alle sorgenti luminose.
 \end{itemize}
-% \\
-% Le geometrie , mentre i materiali . ThreeJS mette a disposizione diversi modelli di shading, includendo sia approcci tradizionali sia modelli basati sul Physically Based Rendering (PBR).
+Nel \Cref{lst:sample-threejs} viene riportata l'implementazione di una semplice scena 3D con all'interno una telecamera prospettica che inquadra un cubo che ruota nel tempo su due assi diversi, mostrata nella \Cref{fig:threejs-scene}.
 %
 \lstinputlisting[language=JavaScript,caption={Esempio di una scena 3D con ThreeJS},label={lst:sample-threejs}]{listings/Threejs.js}
 \begin{figure}[htp]
     \centering
     \includegraphics[width=.4\linewidth]{./figures/sample-scene.png}
-    \caption{Scena 3D in ThreeJS}
+    \caption{Scena 3D di esempio in ThreeJS}
     \label{fig:threejs-scene}
 \end{figure}
 %
