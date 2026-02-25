@@ -13,7 +13,7 @@ const NEAR = 0.1;
 const FAR = 100;
 // inizializza la telecamera prospettica
 const camera = new THREE.PerspectiveCamera(FOV, width / height, NEAR, FAR);
-camera.position.z = 1;
+camera.position.z = 5;
 
 // creazione di una scena
 const scene = new THREE.Scene();
@@ -32,7 +32,7 @@ document.body.appendChild(renderer.domElement);
 renderer.setAnimationLoop(animate);
 function animate(time) {
     // operazioni sulle mesh ad ogni frame
-	mesh.rotation.x = time / 2000;
+	mesh.rotation.x = time / 1000;
 	mesh.rotation.y = time / 1000;
     // render della scena nel canvas
 	renderer.render(scene, camera);
