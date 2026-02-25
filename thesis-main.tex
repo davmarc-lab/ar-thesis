@@ -8,6 +8,8 @@
 
 \usepackage{subcaption}
 
+\sloppy
+
 \school{\unibo}
 \programme{Corso di Laurea in Ingegneria e Scienze Informatiche}
 \title{Un sistema di realtà aumentata per la Robotica di sciame}
@@ -100,7 +102,7 @@ Applicato ad uno sciame di droni, è possibile definire obiettivi collettivi, co
 In seguito le simulazioni si sono trasformate in esperienze reali: sono stati realizzati dei droni fisici in grado di coordinarsi all'interno di uno sciame. Ognuno composto da microcontrollori in grado di gestire comunicazioni \textit{wireless}, monitoraggio e gestione energetica in tempo reale ed il movimento del robot, che dipende dalla velocità di entrambe le coppie di ruote motrici. 
 Tramite l'utilizzo di un'interfaccia web è possibile visualizzare lo stato di tutti i robot, controllarli individualmente ed eventualmente modificare la formazione corrente dell'interno sciame.
 \\
-Infine viene proposto un simulatore in Python, fondamentale per lo sviluppo di questa tesi, dove in mancanza robot fisici è possibile simularne l'esistenza. Permette di gestire numerevoli robot virtuali e modificarne lo stato, utilizzando appositi comandi, inviando costantemente le opportune informazioni al broker \acs{mqtt}.
+Infine viene proposto un simulatore in Python, fondamentale per lo sviluppo di questa tesi, dove in mancanza robot fisici è possibile simularne l'esistenza. Permette di gestire numerevoli robot virtuali e modificarne lo stato, utilizzando appositi comandi, inviando costantemente le opportune informazioni al broker \ac{mqtt}.
 %
 % section Project Emerge (end)
 
@@ -147,7 +149,6 @@ Gli oggetti rappresentati in una scena, chiamati \textit{mesh}, sono costituiti 
     \caption{Scena 3D in ThreeJS}
     \label{fig:threejs-scene}
 \end{figure}
-
 %
 Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard WebXR, un’API che consente la realizzazione di applicazioni di \acl{vr} e \acl{ar} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’API WebXR.
 %
@@ -157,7 +158,7 @@ Attraverso l’utilizzo di componenti dedicati, è possibile creare ambienti imm
 %
 \section{MQTT}\label{sec:sec_mqtt} % (fold)
 %
-Il \acf{mqtt} è un protocollo di comunicazione, divenuto standard OASIS \cite{std-mqtt-5}, basato sul paradigma \textit{publish-subscribe} con l'ausilio di un protocollo di trasporto bidirezionale e affidabile.
+\ac{mqtt} è un protocollo di comunicazione, divenuto standard OASIS \cite{std-mqtt-5}, basato sul paradigma \textit{publish-subscribe} con l'ausilio di un protocollo di trasporto bidirezionale e affidabile.
 Progettato per facilitare la comunicazione all'interno di reti instabili o tra dispositivi che utilizzano un numero limitato di risorse.
 In questo modello sono necessari tre componenti principali, come mostrato in \Cref{fig:back-mqtt-comm}:
 \begin{itemize}
@@ -169,28 +170,28 @@ In questo modello sono necessari tre componenti principali, come mostrato in \Cr
 \begin{figure}[htp]
     \centering
     \includegraphics[width=1\linewidth]{./figures/back-mqtt.png}
-    \caption{Esempio di comunicazione con \acs{mqtt}}
+    \caption{Esempio di comunicazione utilizzando \ac{mqtt}}
     \label{fig:back-mqtt-comm}
 \end{figure}
 %
 Più nello specifico, ogni messaggio inviato e ricevuto viene organizzato in stringhe gerarchiche, chiamate \textit{topic}. Ogni publisher pubblica un messagio in un topic e un subscriber riceve i messaggi dai topic a cui viene sottoscritto.
 L'operazione di filtraggio dei messaggi nei relativi topic viene svolta dal \textit{broker}.
 \\
-L'architettura di \acs{mqtt} introduce diversi disaccoppiamenti tra mittenti e destinatari:
+L'architettura di \ac{mqtt} introduce diversi disaccoppiamenti tra mittenti e destinatari:
 \begin{itemize}
     \item \textbf{Disaccoppiamento spaziale}: ogni publisher non ha la necessità di conoscere ogni subscriber (e viceversa), ognuno di essi comunica esclusivamente con il \textit{broker}.
     \item \textbf{Disaccoppiamento temporale}: un publisher e un subscriber non hanno la necessità di essere attivi simultaneamente per poter comunicare.
     \item \textbf{Disaccoppiamento di sincronizzazione}: le operazioni di invio e ricezione di messaggi non sono processi che interrompono il flusso di esecuzione.
 \end{itemize}
 %
-Tipicamente \acs{mqtt} instaura un canale di comunicazione bidirezionale sfruttando il protocollo \textit{TCP/IP}, il quale garantisce affidabilità e robustezza del canale, ma soprattutto l'ordine dei messaggi inviati rimane invariato in ricezione.
+Tipicamente \ac{mqtt} instaura un canale di comunicazione bidirezionale sfruttando il protocollo \textit{TCP/IP}, il quale garantisce affidabilità e robustezza del canale, ma soprattutto l'ordine dei messaggi inviati rimane invariato in ricezione.
 %
 % section MQTT (end)
-
+%
 % chapter Background (end)
-
+%
 \chapter{Analisi}\label{chap:analisi} % (fold)
-
+%
 \section{Obiettivi}\label{sec:obiettivi} % (fold)
 %
 Questa tesi si pone come obiettivo la realizzazione di un'applicazione web che permetta di trasformare il sistema emulato, utilizzato nella notte europea dei ricercatori, in una scena in realtà aumentata sfruttando un dispositivo dotato di una fotocamera.
@@ -198,7 +199,7 @@ L'applicativo deve inizialmente calibrare un'arena virtuale, sfruttando la telec
 Una volta individuati e calcolata una stima della loro posizione all'interno di una scena 3D, devono essere disegnati i robot emulati dal sistema, all'interno dell'arena virtuale. Le informazioni relative alla posizione ed orientamento di ogni elemento vengono condivise mediante un broker \ac{mqtt} in un \textit{topic} specifico.
 %
 % section Obiettivi (end)
-
+%
 \section{Requisiti}\label{sec:requisiti} % (fold)
 %
 \begin{itemize}
@@ -212,42 +213,95 @@ Una volta individuati e calcolata una stima della loro posizione all'interno di 
 \end{itemize}
 %
 % section Requisiti (end)
-
-\section{Modello}\label{sec:modello} % (fold)
-
-\subsection{WebXR e HTTPS}\label{sub:webxr_e_https} % (fold)
-WebXR rappresenta un’evoluzione significativa nel web, consentendo l’accesso diretto ad esperienze di realtà virtuale e aumentata attraverso il browser. Tuttavia, questa tecnologia comporta dei rischi elevati se la sicurezza dell'utente non viene gestita correttamente.
-\\
-La WebXR Device API permette di interagire con numerevoli componenti e sensori avanzati come accelerometri, giroscopi, fotocamere e microfoni, e persino dispositivi di input specializzati.
-Alcune funzionalità, come l’uso di \texttt{immersive-ar} o \texttt{immersive-vr}, non possono essere attivate se la connessione non è sicura o se la pagina non è in un contesto \textit{trusted}, proprio per evitare che contenuti malevoli possano compromettere la privacy o la sicurezza del dispositivo.
-\\
-Per prevenire l'intercettazione o la manipolazione delle informazioni sensibili, tutte le sessioni WebXR devono essere servite tramite connessioni sicure HTTPS. Si basa su \ac{tls}, garantendo la codifica \textit{end-to-end} dei dati tra client e server, l'autenticità del sito web e l'integrità dei contenuti, impedendo attacchi di tipo \textit{man-in-the-middle} o \textit{spoofing}.
-\\
-Il browser non permette l’inizializzazione di sessioni immersive su pagine non sicure e interrompe l'esecuzione di operazioni non approvate dall’utente. Quest'ultime riprendono la normale esecuzione nel momento in cui l'utente acconsente all’accesso agli eventuali sensori e dati sensibili condivisi.
-% subsection WebXR e HTTPS (end)
-
-\subsection{Broker MQTT}\label{sub:broker_mqtt} % (fold)
-La comunicazione con il sistema emulato è un'aspetto fondamentale per lo sviluppo di questo progetto. Il broker \ac{mqtt} costituisce il nodo centrale della comunicazione, consentendo lo scambio in tempo reale di dati, comandi e stati tra i diversi componenti.
-Tale architettura garantisce la sincronizzazione fra i due sistemi senza richiedere connessioni dirette tra ogni modulo, semplificando la gestione del sistema e favorendo l’integrazione di ulteriori componenti.
-Analogamente a quanto avviene nelle esperienze \textit{WebXR}, servite tramite \textit{HTTPS}, è essenziale che la comunicazione con il broker avvenga attraverso un canale sicuro, come ad esempio \textit{TLS/SSL}, al fine di proteggere le informazioni da intercettazioni o manomissioni e garantire l’integrità dei dati scambiati.
-\\
-Grazie ad \ac{mqtt}, la soluzione proposta è facilmente integrabile al sistema reale con i dispositivi fisici. Nel progetto \textit{Project-Emerge} il sistema interagisce con il broker come publisher, inviando i dati relativi alle posizioni dei robot nel tempo, mentre in questo progetto la comunicazione si concentra nella ricezione e nell'elaborazione dei dati ricevuti.
 %
-% subsection Broker MQTT (end)
-
-\subsection{Arena simulata}\label{sub:arena_simulata} % (fold)
-L'arena simulata riproduce il comportamento dei robot all'interno del mondo reale, comunicando con il sistema principale mediante un broker \ac{mqtt}. Questa simulazione pubblica tutte le informazioni relative alle posizioni ed orientamento all'interno di un \textit{topic}.
+\section{Modello}\label{sec:modello} % (fold)
+In questo progetto viene implementato un sistema di riconoscimento di marker ArUco con l'ausilio di una telecamera. Il tutto integrato in un contesto di realtà aumentata, fornendo una rappresentazione più immersiva dell'emulatore.
+In \Cref{fig:diag-arch} viene mostrata l'architettura generale del sistema.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=\linewidth]{./figures/diag-arch.png}
+    \caption{Diagramma delle classi del sistema}
+    \label{fig:diag-arch}
+\end{figure}
+Nello specifico l'utente, nel momento in cui inizializza la sessione aumentata, approvando i permessi necessari, ha la possibilità di utilizzare la fotocamera esterna del dispositivo con lo scopo di inquadrare esattamente quattro marker ArUco.
+Una volta rilevati i marker viene realizzata, ed eventualmente calibrata, un'arena virtuale dove verranno rappresentati, nella scena 3D, i robot emulati dal sistema \textit{robot-emulation} \cite{robot-emulation}.
+I due sistemi comunicano attraverso \ac{mqtt}, con l'obiettivo di condividere le informazioni che riguardano i robot simulati dall'emulatore con l'arena virtuale, per poter renderizzare i robot in realtà aumentata.
+Durante la simulazione è possibile muoversi liberamente all'interno della scena virtuale spostando il dispositivo di cattura utilizzato inoltre, in caso di disallineamento, l'utente in qualsiasi momento può ricalibrare l'arena virtuale.
+%
+\subsection{Location}\label{sub:location} % (fold)
+La \texttt{Location} definisce la posizione spaziale di ogni marker: i marker reali rappresentano un angolo dell'arena specifico, ognuno di essi ha un identificativo univoco utilizzato per distinguersi fra loro.
+In questo contesto è fondamentale distinguere i diversi marker in quanto, durante la fase di calibrazione, ognuno verrà usato in maniera differente, per ottenere dei risultati attendibili e più vicini alla realtà.
+% subsection Location (end)
+%
+\subsection{Corner}\label{sub:corner} % (fold)
+Un \texttt{Corner} rappresenta un angolo dell'arena, al suo interno vengono incapsulati i dati relativi alla posizione, rotazione e \texttt{Location} del marker rilevato.
+La sua rotazione dipende dall'inquadratura e dalla proiezione della telecamera, in quanto le immagini di una generica telecamera non sono ortogonali ma prospettiche. Ciò significa che ogni elemento, all'interno di un'immagine scattata da una telecamera, sarà distorto di un certo parametro definito dalla telecamera stessa.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=.3\linewidth]{./figures/analisi-corner.png}
+    \caption{Diagramma delle classi di \texttt{Corner}}
+    \label{fig:analisi-corner}
+\end{figure}
+Mentre la sua \texttt{Location} viene definita a priori mediante l'identificativo del marker.
+% subsection Corner (end)
+%
+\subsection{Arena Axes}\label{sub:arena_axes} % (fold)
+La classe \texttt{ArenaAxes} racchiude i vettori normalizzati relativi agli assi calibrati dell'arena. Vengono calcolati in fasi di calibrazione sfruttando i \texttt{Corner} come punti di riferimento.
 \\
-La soluzione implementata si sottoscrive ai relativi \textit{topic} e al momento della ricezione di un messaggio, elabora i dati al suo interno per poi renderizzare le varie mesh all'interno della scena 3D.
+L'asse orizzontale punta verso il lato destro dell'arena, mentre quello verticale verso l'alto. Per quanto riguarda l'asse $z$ viene considerato come vettore normale dell'arena durante la fase di posizionamento dei robot sul piano virtuale generato.
+% subsection Arena Axes (end)
+%
+\subsection{Robot}\label{sub:robot} % (fold)
+La classe \texttt{Robot} racchiude le informazioni di un robot simulato all'interno dell'arena virutale.
+Fornisce dei metodi per poter manipolare la rotazione e la traslazione in \ac{wcs}, all'interno della scena 3D di ThreeJS.
+Vengono utilizzati gli \texttt{id} univoci, ricevuti dall'emulatore, per distingurli fra loro nel momento in cui devono essere traslati o orientati.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=.4\linewidth]{./figures/analisi-robot.png}
+    \caption{Diagramma delle classi di \texttt{Robot}}
+    \label{fig:analisi-robot}
+\end{figure}
+Inolre utilizzano la stessa mesh con la stessa dimensione, ma rotazione e traslazione differente. È necessario conoscere la struttura della mesh, in quanto successivamente verranno utilizzati dei vettori normalizzati per effettuare il posizionamento corretto all'iterno dell'arena. Per posizionamento si intende l'allineamento corretto sul piano virtuale, per simulare quelli reali posti su un piano.
+% subsection Robot (end)
+%
+\subsection{Arena}\label{sub:arena} % (fold)
+L'arena simulata riproduce il comportamento dei robot all'interno del mondo reale, comunicando con il sistema principale mediante un broker \ac{mqtt}. Questa simulazione pubblica tutte le informazioni relative alle posizioni ed orientamento all'interno di un \textit{topic}.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=.4\linewidth]{./figures/analisi-arena.png}
+    \caption{Diagramma delle classi dell'\texttt{Arena}}
+    \label{fig:analisi-arena}
+\end{figure}
+La soluzione implementata si sottoscrive ai relativi \textit{topic} e al momento della ricezione di un messaggio, elabora i dati al suo interno per poi renderizzare i \texttt{Robot} all'interno della scena 3D.
 Uno dei problemi principali analizzati riguarda la differenza di sistema di coordinate di entrambe le arene: l'arena simulata non corrisponde all'arena virtuale nella scena, quindi una posizione nel sistema simulato, se utilizzata all'interno della scena senza alcuna manipolazione, comporta a posizionamenti errati all'interno della scena.
 Il posizionamento dei robot deve essere effettuato all'interno di un'area precisamente delimitata nella scena, nasce la necessità di adattare le posizioni relative ricevute nel sistema di coordinate corrente.
 Oltre a questa trasformazione, si aggrega la trasformazione dalle coordinate relative all'arena al \ac{wcs}.
-% subsection Arena simulata (end)
-
+% subsection Arena (end)
+%
+% \subsection{WebXR e HTTPS}\label{sub:webxr_e_https} % (fold)
+% WebXR rappresenta un’evoluzione significativa nel web, consentendo l’accesso diretto ad esperienze di realtà virtuale e aumentata attraverso il browser. Tuttavia, questa tecnologia comporta dei rischi elevati se la sicurezza dell'utente non viene gestita correttamente.
+% \\
+% La WebXR Device API permette di interagire con numerevoli componenti e sensori avanzati come accelerometri, giroscopi, fotocamere e microfoni, e persino dispositivi di input specializzati.
+% Alcune funzionalità, come l’uso di \texttt{immersive-ar} o \texttt{immersive-vr}, non possono essere attivate se la connessione non è sicura o se la pagina non è in un contesto \textit{trusted}, proprio per evitare che contenuti malevoli possano compromettere la privacy o la sicurezza del dispositivo.
+% \\
+% Per prevenire l'intercettazione o la manipolazione delle informazioni sensibili, tutte le sessioni WebXR devono essere servite tramite connessioni sicure HTTPS. Si basa su \ac{tls}, garantendo la codifica \textit{end-to-end} dei dati tra client e server, l'autenticità del sito web e l'integrità dei contenuti, impedendo attacchi di tipo \textit{man-in-the-middle} o \textit{spoofing}.
+% \\
+% Il browser non permette l’inizializzazione di sessioni immersive su pagine non sicure e interrompe l'esecuzione di operazioni non approvate dall’utente. Quest'ultime riprendono la normale esecuzione nel momento in cui l'utente acconsente all’accesso agli eventuali sensori e dati sensibili condivisi.
+% % subsection WebXR e HTTPS (end)
+%
+% \subsection{Broker MQTT}\label{sub:broker_mqtt} % (fold)
+% La comunicazione con il sistema emulato è un'aspetto fondamentale per lo sviluppo di questo progetto. Il broker \ac{mqtt} costituisce il nodo centrale della comunicazione, consentendo lo scambio in tempo reale di dati, comandi e stati tra i diversi componenti.
+% Tale architettura garantisce la sincronizzazione fra i due sistemi senza richiedere connessioni dirette tra ogni modulo, semplificando la gestione del sistema e favorendo l’integrazione di ulteriori componenti.
+% Analogamente a quanto avviene nelle esperienze \textit{WebXR}, servite tramite \textit{HTTPS}, è essenziale che la comunicazione con il broker avvenga attraverso un canale sicuro, come ad esempio \textit{TLS/SSL}, al fine di proteggere le informazioni da intercettazioni o manomissioni e garantire l’integrità dei dati scambiati.
+% \\
+% Grazie ad \ac{mqtt}, la soluzione proposta è facilmente integrabile al sistema reale con i dispositivi fisici. Nel progetto \textit{Project-Emerge} il sistema interagisce con il broker come publisher, inviando i dati relativi alle posizioni dei robot nel tempo, mentre in questo progetto la comunicazione si concentra nella ricezione e nell'elaborazione dei dati ricevuti.
+% %
+% % subsection Broker MQTT (end)
+%
 % section Modello (end)
-
+%
 % chapter Analisi (end)
-
+%
 \chapter{Progettazione}\label{chap:progettazione} % (fold)
 %
 \section{ThreeJS e WebXR}\label{sec:threejs_e_webxr} % (fold)
@@ -273,7 +327,7 @@ Ciò garantisce la fluidità dell'applicativo in fase di calibrazione, ma porta 
 \begin{figure}[htp]
     \centering
     \includegraphics[width=.5\linewidth]{./figures/diag-marker.png}
-    \caption{Diagramma delle classi della classe \texttt{Marker}}
+    \caption{Diagramma delle classi di \texttt{Marker}}
     \label{fig:diag-marker}
 \end{figure}
 Viene utilizzata una classe di supporto, chiamata \texttt{Marker}, per tenere traccia di tutti i marker trovati e le loro informazioni relative alla \texttt{pose}. La \texttt{pose} è un oggetto, generato dalla libreria \textit{posit2} integrata con \textit{js-aruco2}, contenente i seguenti parametri:
@@ -291,12 +345,6 @@ La classe \texttt{Marker} è stata predisposta per fornire entrambe le possibili
 %
 L'arena è delimitata da marker ArUco posizionati nel mondo reale e ha lo scopo di disegnare all'interno tutti i robot emulati dal simulatore esterno.
 Per creare e calibrare un'arena virturale, è necessario definire quali sono i limiti dell'arena stessa. Questi limiti sono i \texttt{Corner}, la cui posizione nella scena virtuale viene definita dai marker ArUco ricercati nella fase precedente.
-\begin{figure}[htp]
-    \centering
-    \includegraphics[width=.4\linewidth]{./figures/diag-corner.png}
-    \caption{Diagramma delle classi di \texttt{Corner}}
-    \label{fig:diag-corner}
-\end{figure}
 \\
 Ogni \texttt{Corner} necessita dei seguenti parametri:
 \begin{itemize}
@@ -328,12 +376,6 @@ Il punto trovato corrisponde all'origine dell'arena nel sistema di coordinate de
 \subsubsection{Calcolo degli assi di riferimento}\label{sec:calcolo_degli_assi_di_riferimento} % (fold)
 Per permettere la traslazione dei robot nel nuovo sistema di riferimento, bisogna definire un'asse orizzontale ed uno verticale, entrambi relativi all'arena.
 Qui entra in gioco la \texttt{Location} di ogni \texttt{Corner}: data la posizione di due \texttt{Corner}, il vettore normalizzato della differenza fra le posizioni definisce un asse dell'arena.
-\begin{figure}[htp]
-    \centering
-    \includegraphics[width=.6\linewidth]{./figures/diag-arena-axes.png}
-    \caption{Diagramma delle classi parziale: \texttt{Arena} e \texttt{ArenaAxes}}
-    \label{fig:diag-arena-axes}
-\end{figure}
 \\
 Per l'asse verticale si prendono in considerazione due angoli che si trovano entrambi a destra o a sinistra (ad esempio \texttt{TOP\_LEFT} e \texttt{BOT\_LEFT}). Il vettore risultante avrà il verso che punta all'angolo superiore.
 Mentre per l'asse orizzontale si prendono in considerazione due corner che si trovano, idealmente, sulla parte inferiore oppure sulla parte superiore (ad esempio \texttt{TOP\_LEFT} e \texttt{TOP\_RIGHT}).
@@ -346,29 +388,23 @@ Mentre per l'asse orizzontale si prendono in considerazione due corner che si tr
 %
 La comunicazione con un broker \ac{mqtt} deve avvenire utilizzando una connessione sicura, in quanto il contesto dell'applicativo è sviluppato con il protocollo \textit{HTTPS}.
 Soltanto in un ambiente sicuro, il \textit{browser} potrà permettere la comunicazione con quest'ultimo.
-Per implementare il client \ac{mqtt} viene utilizzata la libreria \textit{mqtt.js} \cite{mqttjs}, che permette di configurare e gestire una connessione ad un broker \ac{mqtt}.
+Viene implementata la classe \texttt{MQTTClient}, che permette di connettersi ad un broker, sottoscriversi ai topic, ed eseguire delle operazioni specifiche quando un messaggio viene ricevuto.
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=0.4\linewidth]{./figures/diag-mqtt-client.png}
-    \caption{Diagramma delle classi del \texttt{MQTTClient}}
+    \includegraphics[width=.4\linewidth]{./figures/diag-mqtt-client.png}
+    \caption{Diagramma delle classi di \texttt{MQTTClient}}
     \label{fig:diag-mqtt-client}
 \end{figure}
-Viene implementata la classe \texttt{MQTTClient}, che permette di connettersi ad un broker, sottoscriversi ai topic, ed eseguire delle operazioni specifiche quando un messaggio viene ricevuto.
 %
 \subsubsection{Gestione dei Robot emulati}\label{sec:gestione_dei_robot_emulati} % (fold)
-Le informazioni ricevute dal broker, in formato \textit{JSON}, vengono memorizzate all'interno della classe \texttt{Robot}. Quest'ultima racchiude le seguenti informazioni:
-\begin{itemize}
-    \item \textbf{id}: l'id del robot emulato;
-    \item \textbf{mesh}: la mesh utilizzata per il \textit{render} e le relative informazioni sulla posizione globale;
-    \item \textbf{orientation}: angolo di rotazione, in radianti, rispetto all'asse $y$ dell'arena;
-\end{itemize}
+Le informazioni ricevute dal broker, in formato \textit{JSON}, vengono memorizzate all'interno della classe \texttt{Robot}.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=.4\linewidth]{./figures/diag-robot.png}
     \caption{Diagramma delle classi del \texttt{Robot}}
     \label{fig:diag-robot}
 \end{figure}
-Tutti i robot utilizzano lo stesso modello di base, per questo motivo il modello stesso viene caricato una volta sola e, ogni volta che viene aggiunto un robot, viene creata una nuova copia con un nuovo identificativo nella scena di \textit{ThreeJS}.
+Siccome tutti i robot utilizzano lo stesso modello di base, esso viene caricato una volta sola e, ogni volta che viene aggiunto un robot, viene creata una nuova copia con un nuovo identificativo nella scena di \textit{ThreeJS}.
 Per ogni robot non è necessario tenere traccia delle posizioni relative all'emulatore: infatti ogni posizione viene convertita nel nuovo sistema di coordinate prima di creare un'istanza di questa classe.
 % subsubsection Gestione dei Robot emulati (end)
 %
@@ -413,7 +449,7 @@ In questo caso gli assi del mondo e dell'arena non corrispondono; utilizzando di
 \chapter{Implementazione}\label{chap:implementazione} % (fold)
 Il flusso di esecuzione dell'applicazione è il seguente:
 \begin{enumerate}
-    \item Inizializzazione della scena 3D e del supporto con WebXR, stabilisce una connessione con il broker \acs{mqtt} ed inizializza il detector per i marker ArUco con l'opportuno dizionario
+    \item Inizializzazione della scena 3D e del supporto con WebXR, stabilisce una connessione con il broker \ac{mqtt} ed inizializza il detector per i marker ArUco con l'opportuno dizionario
     \item Nel momento in cui l'utente inizia la sessione in realtà aumentata, attraverso l'apposito pulsante, viene definito il loop di esecuzione con le seguenti fasi:
     \begin{itemize}
         \item \texttt{update}, esegue la ricerca dei marker ed eventualmente inizializza un'arena virtuale;
@@ -437,17 +473,17 @@ Per poter ottenere l'immagine della fotocamera, è necessario specificare la fea
 \subsection{Ricerca dei marker}\label{sub:impl_ricerca_dei_marker} % (fold)
 La libreria utilizzata, \textit{js-aruco2} \cite{js_aruco2}, fornisce i metodi necessari per effettuare la ricerca di marker ArUco appartenenti ad un dizionario specifico, partendo da un'immagine (solitamente ottenuta da un \texttt{canvas}).
 %
-\lstinputlisting[language=JavaScript,caption={Richesta dell'immagine dalla fotocamera},label={lst:init-scene-camera}]{./listings/get-camera-image.js}
+\lstinputlisting[language=JavaScript,caption={Richesta dell'immagine dalla fotocamera},label={lst:get-camera-texture}]{./listings/get-camera-image.js}
 %
 In questo caso non è possibile ottenere l'immagine della fotocamera in maniera diretta \cite{webxr_raw_camera}.
 Grazie alla feature \texttt{camera-access}, è possibile ottenere una texture, contenente l'immagine della fotocamera, in un formato non elaborabile lato CPU (\texttt{WebGLTexture}).
 Tuttavia è possibile utilizzare questo specifico formato come sfondo di una scena. Per questo motivo, viene utilizzata una scena ausiliaria con lo scopo di renderizzare la texture ottenuta, per poi effettuare uno snapshot dello stato attuale della scena. Così facendo è possibile realizzare un immagine elaborabile da \textit{js-aruco2}.
 Prima di utilizzarla bisogna capovolgere l'immagine: il metodo \texttt{readRenderTargetPixels} richiama il metodo di \textit{OpenGL} chiamato \texttt{glReadPixels}. Quest'ultimo inizia a leggere i pixel dall'angolo in basso a sinistra dell'immagine, mentre l'origine della finestra è posta all'angolo in alto a sinistra. Questa differenza nelle origini porta ad avere un'immagine capovolta verticalmente.
 Il metodo \texttt{flipImageVertically} analizza metà dell'immagine, partendo dall'alto, e ad ogni iterazione scambia la riga corrente con la rispettiva riga dal fondo.
-\lstinputlisting[language=JavaScript,caption={Snapshot della scena di supporto per ottenere un immagine elaborabile},label={lst:init-scene-camera}]{./listings/scene-snapshot.js}
+\lstinputlisting[language=JavaScript,caption={Snapshot della scena di supporto per ottenere un immagine elaborabile},label={lst:snapshot-camera-scene}]{./listings/scene-snapshot.js}
 %
 Una volta ottenuta l'immagine viene processata da \textit{js-aruco2}, ottenendo le posizioni dei marker in coordinate 2D.
-\lstinputlisting[language=JavaScript,caption={Ricerca dei marker ArUco},label={lst:init-scene-camera}]{./listings/find-markers.js}
+\lstinputlisting[language=JavaScript,caption={Ricerca dei marker ArUco},label={lst:find-markers}]{./listings/find-markers.js}
 % subsection Ricerca dei marker (end)
 
 \subsection{Stima delle posizioni}\label{sub:impl_stima_delle_posizioni} % (fold)
@@ -536,18 +572,27 @@ Sono state analizzate delle situazioni specifiche per ogni test affrontato, even
 %
 \section{Stabilità del rilevamento dei marker}\label{sec:stabilita_del_rilevamento_dei_marker} % (fold)
 Il riconoscimento e il calcolo delle posizioni dei marker reali è un punto fondamentale per il corretto funzionamento dell'applicazione. I problemi che possono verificarsi sono numerosi: l'illuminazione può creare degli artefatti durante l'analisi dell'immagine portando ad un mancato tracciamento di un marker, come anche analizzando un immagine non perfettamente nitida.
+Inoltre la stima delle posizioni viene effettuata utilizzando \textit{POSIT}, un'algoritmo iterativo e approssimato della posizione reale, perciò valutando gli stessi dati iniziali più volte è possibile ottenere risultati differenti.
+\\
+Questo fenomeno principalmente è causato da variazioni, anche minime, di numeri decimali durante le iterazioni dell'algoritmo.
+Per questo motivo il risultato ottenuto non è sempre preciso e uguale ad ogni avvio dell'applicativo.
+\\
+Per analizzare l'errore vengono utilizzati i seguenti elementi:
+\begin{itemize}
+    \item un marker reale posizionato su un piano;
+    \item una telecamera fissa;
+    \item uno script in JavaScript capace di catturare diversi snapshot per poi stimare le posizioni usando POSIT;
+    \item uno script in Python per calcolare la media e la varianza degli erorri registrati
+\end{itemize}
+La telecamera inquadra il marker, fornendo l'immagine allo script JavaScript che effettua la ricerca dei marker, all'interno dell'immagine, per poi stimarnee la posizione 3D; in seguito viene registrato il \texttt{bestError}, fornito da POSIT.
+Infine i dati ottenuti vengono analizzati dallo script in Python calcolando la media e la varianza per poi rappresentarli in un diagramma degli estremi, mostrato in \Cref{fig:posit-error}.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=.8\linewidth]{./figures/posit-error.png}
     \caption{Variazione degli errori di POSIT}
     \label{fig:posit-error}
 \end{figure}
-Inoltre la stima delle posizioni viene effettuata utilizzando \textit{POSIT}, un'algoritmo iterativo e approssimato della posizione reale, perciò valutando gli stessi dati iniziali più volte è possibile ottenere risultati differenti.
-\\
-Questo fenomeno principalmente è causato da variazioni, anche minime, di numeri decimali durante le iterazioni dell'algoritmo.
-Per questo motivo il risultato ottenuto non è sempre preciso e uguale ad ogni avvio dell'applicativo.
-\\
-Nella \Cref{fig:posit-error} viene mostrata la variazione dell'errore, calcolato durante la stima delle posizioni, di \textit{POSIT}: un errore elevato significa un forte disallineamento tra la posizione reale di un marker e quella stimata nella scena, un errore minore mostrerà risultati più accurati.
+Un errore elevato comporta un forte disallineamento tra la posizione reale di un marker e quella stimata nella scena, un errore minore mostrerà risultati più accurati.
 %
 % section Stabilità del rilevamento dei marker (end)
 \section{Gestione delle comunicazioni}\label{sec:gestione_delle_comunicazioni} % (fold)
@@ -569,7 +614,7 @@ Per avvisare l'utente in queste situazioni critiche, come mostrato nelle immagin
         \centering
         \includegraphics[width=\linewidth]{./figures/mqtt-reconnecting-cut.jpeg}
             \caption{Riconnesione}
-        \label{fig:mqtt-connected}
+        \label{fig:mqtt-riconnecting}
     \end{subfigure}
     %
     \hfill
@@ -577,7 +622,7 @@ Per avvisare l'utente in queste situazioni critiche, come mostrato nelle immagin
         \centering
         \includegraphics[width=\linewidth]{./figures/mqtt-disconnected-cut.jpeg}
         \caption{Disconnesso}
-        \label{fig:mqtt-connected}
+        \label{fig:mqtt-disconnected}
     \end{subfigure}
     \caption{Stato della connessione con il broker}
 \end{figure}
