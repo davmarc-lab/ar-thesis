@@ -5,14 +5,14 @@ async function createArena(bestValues = true) {
     // add the arena 3d virtual object to the scene
     scene.add(arena.getArena());
 
-    broker.onMessage = async (topic, msg) => {
+    client.on('message', async (topic, msg) => {
         // json parsed content of mqtt message
         const json = parseBrokerMessage(msg);
         const rId = json.robot_id;
         const simPos = { x: json.x, y: json.y };
         const orient = json.orientation;
         // convert simulated arena coords into arena coords
-        const normPos = Arena.normalizeSimulatedPos(arena, simPos));
+        const normPos = Arena.normalizeSimulatedPos(arena, simPos);
 
         // if the robot is not in the arena it will be created
         if (!arena.hasRobot(rId)) {
@@ -23,7 +23,7 @@ async function createArena(bestValues = true) {
         arena.moveRobot(rId, normPos)
         // robot arena y-axis orientation
         arena.orientRobot(rId, orient)
-    };
+    });
 }
 
 class Arena {

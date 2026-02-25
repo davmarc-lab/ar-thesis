@@ -15,7 +15,7 @@ class Arena {
 
         const robot = this.#robots.find(r => r.getId() === id);
         if (robot) {
-            robot.orient(this.#axes.y, orient);
+            robot.orient(this.#axes.getY(), orient)
         }
     }
 }

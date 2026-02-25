@@ -10,7 +10,7 @@ const opts = {
 }
 
 // create an mqtt client with the given options
-const broker = new MQTTBroker(url, opts);
+const client = new MQTTClient(url, opts);
 // try to connect to the broker
 // when it succeed it subscribes to the given topic list
-broker.connect(topics);
+client.connect(topics);

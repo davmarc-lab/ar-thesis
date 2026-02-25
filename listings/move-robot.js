@@ -25,8 +25,8 @@ class Arena {
         // robot position start from arena origin point
         const robotPos = new THREE.Vector3().copy(this.#origin);
         // calculate final position using the given relative position
-        const relx = new THREE.Vector3().copy(this.#axes.x).multiplyScalar(point.x)
-        const rely = new THREE.Vector3().copy(this.#axes.y).multiplyScalar(point.y)
+        const relx = new THREE.Vector3().copy(this.#axes.getX()).multiplyScalar(point.x)
+        const rely = new THREE.Vector3().copy(this.#axes.getY()).multiplyScalar(point.y)
         return robotPos.add(relx).add(rely);
     }
 }

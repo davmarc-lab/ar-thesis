@@ -1,9 +1,9 @@
 class Arena {
     ...
     #estimateArenaOrigin() {
-        const x = this.#calculateCentroid(this.corners.map(p => p.position.x));
-        const y = this.#calculateCentroid(this.corners.map(p => p.position.y));
-        const z = this.#calculateCentroid(this.corners.map(p => p.position.z));
+        const x = this.#calculateCentroid(this.#corners.map(p => p.getPosition().x));
+        const y = this.#calculateCentroid(this.#corners.map(p => p.getPosition().y));
+        const z = this.#calculateCentroid(this.#corners.map(p => p.getPosition().z));
 
         this.#origin = new THREE.Vector3(x, y, z);
         this.#isOriginOk = true;

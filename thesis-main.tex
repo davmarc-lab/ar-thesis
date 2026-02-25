@@ -170,7 +170,7 @@ In questo modello sono necessari tre componenti principali, come mostrato in \Cr
 \begin{figure}[htp]
     \centering
     \includegraphics[width=1\linewidth]{./figures/back-mqtt.png}
-    \caption{Esempio di comunicazione utilizzando \ac{mqtt}}
+    \caption{Esempio di comunicazione utilizzando MQTT}
     \label{fig:back-mqtt-comm}
 \end{figure}
 %
@@ -227,6 +227,11 @@ Nello specifico l'utente, nel momento in cui inizializza la sessione aumentata, 
 Una volta rilevati i marker viene realizzata, ed eventualmente calibrata, un'arena virtuale dove verranno rappresentati, nella scena 3D, i robot emulati dal sistema \textit{robot-emulation} \cite{robot-emulation}.
 I due sistemi comunicano attraverso \ac{mqtt}, con l'obiettivo di condividere le informazioni che riguardano i robot simulati dall'emulatore con l'arena virtuale, per poter renderizzare i robot in realtà aumentata.
 Durante la simulazione è possibile muoversi liberamente all'interno della scena virtuale spostando il dispositivo di cattura utilizzato inoltre, in caso di disallineamento, l'utente in qualsiasi momento può ricalibrare l'arena virtuale.
+%
+\subsection{Client MQTT}\label{sub:client_ac_mqtt_} % (fold)
+La classe \texttt{MQTTClient} incapsula i parametri da utilizzare quando viene effettuata la connessione ad un broker. In aggiunta fornisce dei metodi per inizializzare il processo di connessione e offre la possibilità di sottoscrivere il client a diversi topic.
+È stata progettata in maniera tale da poter essere riutilizzabile in atri contesti, fornendo meccanismi specifici che permettono di definire comportamenti diversi, ad esempio è possibile definire operazioni per gestire la disconnessione dal client, oppure i comportamenti da adottare in caso di ricezione dei messaggi.
+% subsection Client \ac{mqtt} (end)
 %
 \subsection{Location}\label{sub:location} % (fold)
 La \texttt{Location} definisce la posizione spaziale di ogni marker: i marker reali rappresentano un angolo dell'arena specifico, ognuno di essi ha un identificativo univoco utilizzato per distinguersi fra loro.
@@ -292,7 +297,6 @@ Oltre a questa trasformazione, si aggrega la trasformazione dalle coordinate rel
 % \subsection{Broker MQTT}\label{sub:broker_mqtt} % (fold)
 % La comunicazione con il sistema emulato è un'aspetto fondamentale per lo sviluppo di questo progetto. Il broker \ac{mqtt} costituisce il nodo centrale della comunicazione, consentendo lo scambio in tempo reale di dati, comandi e stati tra i diversi componenti.
 % Tale architettura garantisce la sincronizzazione fra i due sistemi senza richiedere connessioni dirette tra ogni modulo, semplificando la gestione del sistema e favorendo l’integrazione di ulteriori componenti.
-% Analogamente a quanto avviene nelle esperienze \textit{WebXR}, servite tramite \textit{HTTPS}, è essenziale che la comunicazione con il broker avvenga attraverso un canale sicuro, come ad esempio \textit{TLS/SSL}, al fine di proteggere le informazioni da intercettazioni o manomissioni e garantire l’integrità dei dati scambiati.
 % \\
 % Grazie ad \ac{mqtt}, la soluzione proposta è facilmente integrabile al sistema reale con i dispositivi fisici. Nel progetto \textit{Project-Emerge} il sistema interagisce con il broker come publisher, inviando i dati relativi alle posizioni dei robot nel tempo, mentre in questo progetto la comunicazione si concentra nella ricezione e nell'elaborazione dei dati ricevuti.
 % %
@@ -306,22 +310,10 @@ Oltre a questa trasformazione, si aggrega la trasformazione dalle coordinate rel
 %
 \section{ThreeJS e WebXR}\label{sec:threejs_e_webxr} % (fold)
 %
-La realizzazione di una scena in realtà aumentata con l'ausilio di ThreeJS è molto immediato, in quanto la libreria integra la maggior parte delle funzionalità di  WebXR.
-Le due librerie coesistono elaborando i dati in contemporanea: ThreeJS si occupa di renderizzare tutti gli elementi della scena e l'immagine della fotocamera ad ogni frame, mentre WebXR gestisce il dispositivo XR utilizzato ed eventuali controller.
-\\
-Tuttavia, WebXR categorizza l'immagine delle telacamera, ed altre informazioni non rilevanti in questa tesi, come contenuto sensibile. Perciò per poter avviare una qualsiasi sessione in realtà aumentata (o virtuale), è necessario che l'utente dia il consenso all'utilizzo della telecamera.
-%
-Inoltre per ottenere l'immagine stessa durante una sessione XR, utilizzando il modulo aggiuntivo \textit{WebXR Raw Camera Access Module} \cite{webxr_raw_camera}.
-Grazie a questo modulo si ha la possibilità di ottenere una texture, nel contesto di WebGL, rappresentante l'immagine della fotocamera in uno specifico \texttt{XRFrame}, durante l'esecuzione di una \texttt{XRSession}.
-%
 % section ThreeJS e WebXR (end)
 %
 \section{Marker Detection e Pose Estimation}\label{sec:marker_detection_e_pose_estimation} % (fold)
 %
-Per ricercare all'interno di un'immagine i marker ArUco viene utilizzata la libreria \textit{js-aruco} \cite{js_aruco2}.
-Questa l'libreria analizza i dati di un immagine e attraverso algoritmi e tecniche di Visione Artificiale, trova la posizione dei marker ArUco di un dizionario specifico, all'interno dell'immagine data.
-Inoltre offre delle tecniche per stimare la posizione dei marker in uno spazio tridimensionale.
-\\
 Nel flusso esecutivo il riconoscimento, essendo una parte molto onerosa, non viene eseguito ad ogni iterazione del \textit{loop} principale, ma viene eseguita soltanto dopo un determinato numero di \textit{frame} dall'ultima esecuzione se l'arena non è stata gia calibrata.
 Ciò garantisce la fluidità dell'applicativo in fase di calibrazione, ma porta a non avere un tracking immediato dei marker presenti.
 \begin{figure}[htp]
@@ -387,7 +379,9 @@ Mentre per l'asse orizzontale si prendono in considerazione due corner che si tr
 \subsection{Comunicazione con il broker MQTT}\label{sub:comunicazione_con_il_broker_mqtt} % (fold)
 %
 La comunicazione con un broker \ac{mqtt} deve avvenire utilizzando una connessione sicura, in quanto il contesto dell'applicativo è sviluppato con il protocollo \textit{HTTPS}.
+È essenziale che la comunicazione con il broker avvenga attraverso un canale sicuro, come ad esempio \textit{TLS/SSL}, al fine di proteggere le informazioni da intercettazioni o manomissioni e garantire l’integrità dei dati scambiati.
 Soltanto in un ambiente sicuro, il \textit{browser} potrà permettere la comunicazione con quest'ultimo.
+\\
 Viene implementata la classe \texttt{MQTTClient}, che permette di connettersi ad un broker, sottoscriversi ai topic, ed eseguire delle operazioni specifiche quando un messaggio viene ricevuto.
 \begin{figure}[htp]
     \centering
@@ -458,20 +452,31 @@ Il flusso di esecuzione dell'applicazione è il seguente:
 \end{enumerate}
 %
 \section{ThreeJS e WebXR}\label{sec:impl_threejs_e_webxr} % (fold)
+La realizzazione di una scena in realtà aumentata con l'ausilio di ThreeJS è molto immediato, in quanto la libreria integra la maggior parte delle funzionalità di  WebXR.
+Le due librerie coesistono elaborando i dati in contemporanea: ThreeJS si occupa di renderizzare tutti gli elementi della scena e l'immagine della fotocamera ad ogni frame, mentre WebXR gestisce il dispositivo XR utilizzato ed eventuali controller.
+\\
+Tuttavia, WebXR categorizza l'immagine delle telacamera, ed altre informazioni non rilevanti in questa tesi, come contenuto sensibile. Perciò per poter avviare una qualsiasi sessione in realtà aumentata (o virtuale), è necessario che l'utente dia il consenso all'utilizzo della telecamera.
+%
+Inoltre per ottenere l'immagine stessa durante una sessione XR, utilizzando il modulo aggiuntivo \textit{WebXR Raw Camera Access Module} \cite{webxr_raw_camera}.
+Grazie a questo modulo si ha la possibilità di ottenere una texture, nel contesto di WebGL, rappresentante l'immagine della fotocamera in uno specifico \texttt{XRFrame}, durante l'esecuzione di una \texttt{XRSession}.
 \subsection{Integrazione di una telecamera}\label{sub:impl_integrazione_di_una_telecamera} % (fold)
 Per integrare la telecamera del dispositivo all'interno di una scena ThreeJS, è necessario aver inizializzato il \rd, successivamente bisogna abilitare il componente \texttt{xr} all'interno del \rd{} stesso.
 %
 \lstinputlisting[language=JavaScript,caption={Inizializzazione della scena 3D con il supporto per WebXR},label={lst:init-scene-camera}]{./listings/ar-session.js}
-Per poter ottenere l'immagine della fotocamera, è necessario specificare la feature \texttt{camera-access}, fornita dal modulo \textit{WebXR Raw Camera Access Module} \cite{webxr_raw_camera}.
+Per poter ottenere l'immagine della fotocamera, è necessario specificare la feature \texttt{camera-access}, fornita dal WebXR Raw Camera Access Module.
 %
 % subsection Integrazione di una telecamera (end)
 
 % section ThreeJS e WebXR (end)
 
 \section{Marker Detection e Pose Estimation}\label{sec:impl_marker_detection_e_pose_estimation} % (fold)
-
+%
 \subsection{Ricerca dei marker}\label{sub:impl_ricerca_dei_marker} % (fold)
-La libreria utilizzata, \textit{js-aruco2} \cite{js_aruco2}, fornisce i metodi necessari per effettuare la ricerca di marker ArUco appartenenti ad un dizionario specifico, partendo da un'immagine (solitamente ottenuta da un \texttt{canvas}).
+Per ricercare all'interno di un'immagine i marker ArUco viene utilizzata la libreria \textit{js-aruco2} \cite{js_aruco2}.
+Questa l'libreria analizza i dati di un immagine e attraverso algoritmi e tecniche di Visione Artificiale, trovando la posizione dei marker ArUco di un dizionario specifico, all'interno dell'immagine data.
+Inoltre offre delle tecniche per stimare la posizione dei marker in uno spazio tridimensionale.
+\\
+Fornisce i metodi necessari per effettuare la ricerca di marker ArUco appartenenti ad un dizionario specifico, partendo da un'immagine (solitamente ottenuta da un \texttt{canvas}).
 %
 \lstinputlisting[language=JavaScript,caption={Richesta dell'immagine dalla fotocamera},label={lst:get-camera-texture}]{./listings/get-camera-image.js}
 %
@@ -541,6 +546,7 @@ $$
 Dove $xSize$ e $ySize$ rappresentano rispettivamente la metà della lunghezza di due lati consecutivi dell'arena, mentre $simulatedSize$ è la dimensione del mondo dell'arena simulata.
 %
 \lstinputlisting[language=JavaScript,caption={Operazioni eseguite alla ricezione di ogni messaggio},label={lst:broker-message}]{./listings/broker-message.js}
+All'interno del \Cref{lst:broker-message} sopra mostrato, si nota come vengono definite le operazioni da eseguire quando viene ricevuto un messaggio: ogni volta che il client riceve un messaggio emette il segnale \texttt{message}, mentre nel programma principale vengono definite le istruzioni da eseguire ogni volta che il segnale viene emesso.
 %
 % subsection Comunicazione con il broker (end)
 
