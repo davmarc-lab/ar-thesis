@@ -64,12 +64,12 @@ Max 2000 characters, strict.
 %----------------------------------------------------------------------------------------
 \chapter{Introduzione}\label{chap:introduzione}
 %----------------------------------------------------------------------------------------
-Negli ultimi anni, la \ac{ar} ha acquisito un ruolo sempre più centrale in numerosi ambiti scientifici e tecnologici, grazie all’aumento delle prestazioni dei dispositivi mobili e alla disponibilità di librerie software capaci di gestire contenuti 3D immersivi nella maggior parte dei \textit{browser} più comuni.
+Negli ultimi anni, la \ac{ar} ha acquisito un ruolo sempre più centrale in numerosi ambiti scientifici e tecnologici, grazie all’aumento delle prestazioni dei dispositivi mobili e alla disponibilità di librerie software capaci di gestire contenuti 3D immersivi, nella maggior parte dei \textit{browser} più comuni.
 La possibilità di sovrapporre elementi virtuali all’ambiente reale ha aperto nuove prospettive sia nel campo della didattica e dell'intrattenimento digitale, che nella robotica e nelle simulazioni industriali, ma anche in campi medici e militari.
 In particolare, la combinazione tra \ac{ar} e simulazioni di robot mobili permette di osservare in tempo reale sciami di robot, senza dover ricreare un laboratorio fisico completo, offrendo così un potente strumento di visualizzazione e sperimentazione.
 \\
 \\
-Il presente lavoro di tesi si propone di sviluppare un sistema in grado di inizializzare una scena in realtà, nella quale vengono mostrati dei robot virtuali, all’interno di un’arena delimitata da \textit{marker} \textit{ArUco} \cite{aruco-1} \cite{aruco-2} reali, replicando il comportamento simulato da un emulatore \textit{robot-emulation} \cite{robot-emulation}.
+Il presente lavoro di tesi si propone di sviluppare un sistema in grado di inizializzare una scena in realtà aumentata, nella quale vengono mostrati dei robot virtuali, all’interno di un’arena delimitata da \textit{marker} \textit{ArUco} \cite{aruco-1} \cite{aruco-2} reali, replicando il comportamento simulato da un emulatore, chiamato \textit{robot-emulation} \cite{robot-emulation}.
 \\
 La scena è stata realizzata in JavaScript, utilizzando \textit{ThreeJS} \cite{threejs} per la gestione della grafica 3D e \textit{WebXR} \cite{webxr} per integrare le funzionalità di realtà aumentata direttamente nel browser.
 La logica dello sciame, invece, è gestita da un sistema sviluppato in Scala, con l'ausilio del \textit{framework} \ac{scafi} \cite{scafi}, che implementa i principi dell’\ac{ac} \cite{ac} per simulare comportamenti emergenti in modo scalabile e modulare.
@@ -89,7 +89,7 @@ L’uso di protocolli standard, come \ac{mqtt}, garantisce l'affidabilità nella
 %
 \paragraph{Struttura della tesi}
 Il \Cref{chap:background} fornisce un'introduzione al contesto del progetto, come Porject Emerge e la realtà aumentata; in aggiunta vengono descritte le principali tecnologie utilizzate come ThreeJS, WebXR e MQTT.
-Segue il \Cref{chap:analisi} dove vengono fissati gli obiettivi ed i requisiti da soddisfare durante la realizzazione del progetto. Inoltre viene descritta l'architettura del sistema sviluppato.
+Segue il \Cref{chap:analisi} dove vengono fissati gli obiettivi ed i requisiti da soddisfare durante la realizzazione del progetto. Inoltre viene analizzata l'architettura del sistema sviluppato.
 All'interno del \Cref{chap:progettazione} viene descritta in dettaglio l'architettura progettata, giustificando tutte le scelte di sviluppo argomentate nel \Cref{chap:implementazione}. Più in dettaglio viene mostrata l'implementazione dell'architettura realizzata, con le relative librerie utilizzate.
 Successivamente nel \Cref{chap:valutazione} vengono effettuati degli studi sulla stabilità e prestazioni del sistema, mostrando grafici e immagini relative ad ogni analisi svolta.
 Infine nel \Cref{chap:conclusioni} vengono riassunte le funzionalità del sistema assieme alle rispettive limitazioni, arricchendo il tutto con possibili integrazioni future.
