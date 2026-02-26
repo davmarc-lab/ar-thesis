@@ -64,34 +64,43 @@ Max 2000 characters, strict.
 %----------------------------------------------------------------------------------------
 \chapter{Introduzione}\label{chap:introduzione}
 %----------------------------------------------------------------------------------------
-
-Write your intro here.
-\sidenote{Add sidenotes in this way. They are named after the author of the thesis}
-
-You can use acronyms that your defined previously,
-such as \ac{IoT}.
+Negli ultimi anni, la \ac{ar} ha acquisito un ruolo sempre più centrale in numerosi ambiti scientifici e tecnologici, grazie all’aumento delle prestazioni dei dispositivi mobili e alla disponibilità di librerie software capaci di gestire contenuti 3D immersivi nella maggior parte dei \textit{browser} più comuni.
+La possibilità di sovrapporre elementi virtuali all’ambiente reale ha aperto nuove prospettive sia nel campo della didattica e dell'intrattenimento digitale, che nella robotica e nelle simulazioni industriali, ma anche in campi medici e militari.
+In particolare, la combinazione tra \ac{ar} e simulazioni di robot mobili permette di osservare in tempo reale sciami di robot, senza dover ricreare un laboratorio fisico completo, offrendo così un potente strumento di visualizzazione e sperimentazione.
+\\
+\\
+Il presente lavoro di tesi si propone di sviluppare un sistema in grado di inizializzare una scena in realtà, nella quale vengono mostrati dei robot virtuali, all’interno di un’arena delimitata da \textit{marker} \textit{ArUco} \cite{aruco-1} \cite{aruco-2} reali, replicando il comportamento simulato da un emulatore \textit{robot-emulation} \cite{robot-emulation}.
+\\
+La scena è stata realizzata in JavaScript, utilizzando \textit{ThreeJS} \cite{threejs} per la gestione della grafica 3D e \textit{WebXR} \cite{webxr} per integrare le funzionalità di realtà aumentata direttamente nel browser.
+La logica dello sciame, invece, è gestita da un sistema sviluppato in Scala, con l'ausilio del \textit{framework} \ac{scafi} \cite{scafi}, che implementa i principi dell’\ac{ac} \cite{ac} per simulare comportamenti emergenti in modo scalabile e modulare.
+Le posizioni dei robot vengono trasmesse in tempo reale alla scena virtuale tramite \ac{mqtt}, permettendo all'arena virtuale di rimanere sincronizzata con quella simulata.
+\\
+\\
+Il principale obiettivo del progetto consiste nel creare un ponte tra simulazione digitale ed una scena immersiva, consentendo agli utenti di osservare in tempo reale il comportamento collettivo dei robot direttamente nello spazio fisico circostante.
+In particolare, il lavoro si pone tre obiettivi principali:
+\begin{enumerate}
+    \item \textbf{Realizzare un sistema \ac{ar} stabile e interattivo}, capace di rilevare marker fisici e definire dinamicamente un’arena virtuale.
+    \item \textbf{Integrare la simulazione dello sciame}, aggiornando continuamente le posizioni dei robot all’interno della scena.
+    \item \textbf{Riprodurre fedelmente la scena dell’emulatore}, fornendo un riferimento visivo immediato e comparabile con la simulazione originale.
+\end{enumerate}
+L’approccio seguito per lo sviluppo del progetto è modulare: la scena 3D si occupa esclusivamente della visualizzazione e dell’interazione, mentre la logica dello sciame è gestita da un sistema esterno.
+Questo consente di ottenere una maggiore scalabilità e riusabilità del codice, oltre a semplificare la manutenzione futura.
+L’uso di protocolli standard, come \ac{mqtt}, garantisce l'affidabilità nella trasmissione dei dati e la compatibilità tra i diversi moduli, ma soprattuto può essere integrato in qualsiasi tipo di sistema compatibile, senza influenzare in profondità l'architettura.
 %
-If you use acronyms twice,
-they will be written in full only once
-(indeed, you can mention the \ac{IoT} now without it being fully explained).
-%
-In some cases, you may need a plural form of the acronym.
-%
-For instance,
-that you are discussing \acp{vm},
-you may need both \ac{vm} and \acp{vm}.
-
 \paragraph{Struttura della tesi}
-
-\note{At the end, describe the structure of the paper}
-
+Il \Cref{chap:background} fornisce un'introduzione al contesto del progetto, come Porject Emerge e la realtà aumentata; in aggiunta vengono descritte le principali tecnologie utilizzate come ThreeJS, WebXR e MQTT.
+Segue il \Cref{chap:analisi} dove vengono fissati gli obiettivi ed i requisiti da soddisfare durante la realizzazione del progetto. Inoltre viene descritta l'architettura del sistema sviluppato.
+All'interno del \Cref{chap:progettazione} viene descritta in dettaglio l'architettura progettata, giustificando tutte le scelte di sviluppo argomentate nel \Cref{chap:implementazione}. Più in dettaglio viene mostrata l'implementazione dell'architettura realizzata, con le relative librerie utilizzate.
+Successivamente nel \Cref{chap:valutazione} vengono effettuati degli studi sulla stabilità e prestazioni del sistema, mostrando grafici e immagini relative ad ogni analisi svolta.
+Infine nel \Cref{chap:conclusioni} vengono riassunte le funzionalità del sistema assieme alle rispettive limitazioni, arricchendo il tutto con possibili integrazioni future.
+%
 \chapter{Background}\label{chap:background} % (fold)
-
+%
 \section{Project Emerge}\label{sec:project_emerge} % (fold)
 \textit{Project Emerge} \cite{project-emerge} nasce con l’obiettivo di esplorare il coordinamento di uno sciame di droni riproducendo le dinamiche tipiche di un sistema distribuito reale.
 L’idea alla base del progetto è quella di osservare come un insieme di agenti autonomi, dotati di capacità computazionali e comunicative limitate, possa raggiungere comportamenti collettivi coerenti senza fare affidamento su un controllo centralizzato.
 \\
-Il progetto propone un’implementazione del nucleo logico dell’\ac{ac} \cite{ac}, adottando Scala come linguaggio di programmazione attraverso l’utilizzo del \textit{framework} \ac{scafi} \cite{scafi}.
+Il progetto propone un’implementazione del nucleo logico dell’\ac{ac}, adottando Scala come linguaggio di programmazione attraverso l’utilizzo del framework \ac{scafi}.
 \ac{scafi} è una libreria, scritta in Scala, e framework per per la programmazione aggregata, che implementa una variante della semantica operazionale dell’\ac{hofc}, resa disponibile come \ac{dsl}, fornendo una piattaforma e un insieme di \ac{api} per la simulazione e l’esecuzione di sistemi e applicazioni aggregate.
 Grazie all’impiego di sistemi decentralizzati, ogni elemento elabora localmente le informazioni e le condivide con i nodi vicini, superando i limiti di un approccio centralizzato, spesso non ideale in contesti dinamici.
 Applicato ad uno sciame di droni, è possibile definire obiettivi collettivi, come la copertura spaziale, formazione o esplorazione cooperativa, in modo astratto, garantendo l'adattamento automatico alle variazioni topologiche dell'ambiente circostante.
@@ -126,7 +135,7 @@ Tali caratteristiche rendono l’AR una tecnologia abilitante nell’ambito dell
 % section Realtà aumentata (end)
 
 \section{ThreeJS}\label{sec:threejs} % (fold)
-\textit{ThreeJS} \cite{threejs} è una libreria in JavaScript progettata per semplificare lo sviluppo di applicazioni di grafica tridimensionale in ambienti web. Si basa su WebGL, un’\ac{api} a basso livello che consente l’accesso diretto alle funzionalità della GPU attraverso il \textit{browser}.
+ThreeJS è una libreria in JavaScript progettata per semplificare lo sviluppo di applicazioni di grafica tridimensionale in ambienti web. Si basa su WebGL, un’\ac{api} a basso livello che consente l’accesso diretto alle funzionalità della GPU attraverso il browser.
 L’utilizzo diretto di WebGL richiede una conoscenza approfondita della pipeline grafica e della programmazione tramite shader, per questo motivo ThreeJS introduce un livello di astrazione che consente di sviluppare scene tridimensionali complesse riducendo la complessità implementativa, pur mantenendo un elevato grado di flessibilità.
 \\
 %
@@ -151,7 +160,7 @@ Nel \cref{lst:sample-threejs} viene riportata l'implementazione di una semplice 
     \label{fig:threejs-scene}
 \end{figure}
 %
-Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard \textit{WebXR} \cite{webxr}, un’\ac{api} che consente la realizzazione di applicazioni di \acl{vr} e \acl{ar} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’\ac{api} WebXR.
+Un aspetto di particolare interesse di ThreeJS è il supporto nativo allo standard WebXR, un’\ac{api} che consente la realizzazione di applicazioni di \ac{vr} e \ac{ar} direttamente all’interno del browser. ThreeJS fornisce un livello di integrazione che semplifica la gestione dei dispositivi XR, come visori VR e dispositivi mobili compatibili con AR, astrando la complessità della comunicazione diretta con l’\ac{api} WebXR.
 %
 Attraverso l’utilizzo di componenti dedicati, è possibile creare ambienti immersivi tridimensionali in cui la scena viene renderizzata in modo stereoscopico e aggiornata in funzione dei movimenti dell’utente. L’integrazione con WebXR permette inoltre di gestire input avanzati, come controller e sistemi di tracciamento.
 %
@@ -207,7 +216,7 @@ Tipicamente \ac{mqtt} instaura un canale di comunicazione bidirezionale sfruttan
 \section{Obiettivi}\label{sec:obiettivi} % (fold)
 %
 Questa tesi si pone come obiettivo la realizzazione di un'applicazione web che permetta di trasformare il sistema emulato, utilizzato nella Notte Europea dei Ricercatori, in una scena in realtà aumentata sfruttando un dispositivo dotato di una fotocamera.
-L'applicativo deve inizialmente calibrare un'arena virtuale, sfruttando la telecamera del dispositivo e quattro \textit{marker} \textit{ArUco} \cite{aruco-1} \cite{aruco-2} posizionati nel mondo reale.
+L'applicativo deve inizialmente calibrare un'arena virtuale, sfruttando la telecamera del dispositivo e quattro marker ArUco posizionati nel mondo reale.
 Una volta individuati e calcolata una stima della loro posizione all'interno di una scena 3D, devono essere disegnati i robot emulati dal sistema, all'interno dell'arena virtuale. Le informazioni relative alla posizione ed orientamento di ogni elemento vengono condivise mediante un broker \ac{mqtt} in un topic specifico.
 %
 % section Obiettivi (end)
@@ -236,7 +245,7 @@ In \Cref{fig:diag-arch} viene mostrata l'architettura generale del sistema.
     \label{fig:diag-arch}
 \end{figure}
 Nello specifico l'utente, nel momento in cui inizializza la sessione aumentata, approvando i permessi necessari, ha la possibilità di utilizzare la fotocamera esterna del dispositivo con lo scopo di inquadrare esattamente quattro marker ArUco.
-Una volta rilevati i marker viene realizzata, ed eventualmente calibrata, un'arena virtuale dove verranno rappresentati, nella scena 3D, i robot emulati dal sistema \textit{robot-emulation} \cite{robot-emulation}.
+Una volta rilevati i marker viene realizzata, ed eventualmente calibrata, un'arena virtuale dove verranno rappresentati, nella scena 3D, i robot emulati dal sistema robot-emulation.
 I due sistemi comunicano attraverso \ac{mqtt}, con l'obiettivo di condividere le informazioni che riguardano i robot simulati dall'emulatore con l'arena virtuale, per poter renderizzare i robot in realtà aumentata.
 Durante la simulazione è possibile muoversi liberamente all'interno della scena virtuale spostando il dispositivo di cattura utilizzato inoltre, in caso di disallineamento, l'utente in qualsiasi momento può ricalibrare l'arena virtuale.
 %
@@ -693,23 +702,24 @@ Detto ciò è possibile concludere quest'analisi affermando che le prestazioni n
 %
 % chapter Valutazione (end)
 %
-\chapter{Conclusioni e lavori futuri}\label{chap:conclusioni_e_lavori_futuri} % (fold)
+\chapter{Conclusioni e lavori futuri}\label{chap:conclusioni} % (fold)
 In questo progetto è stato implementato correttamente un sistema capace di trasformare l'arena emulata in un contesto più immersivo tramite la realtà aumentata.
 Tutti i requisiti sono stati raggiunti con alcune limitazioni, quali:
 \begin{itemize}
     \item il rilevamento dei marker non in tempo reale a causa dell'impatto sulle prestazioni, influenzando la reattività della scena;
-    \item i corner non sono perfettamente allineati con i marker reali, a causa principalmente degli errori durante la stima delle posizioni 3D;
+    \item i corner non sono perfettamente allineati con i marker reali, a causa degli errori durante la stima delle posizioni 3D;
 \end{itemize}
 Nonostante queste limitazioni l'applicativo riesce comunque a gestire un'arena virtuale che corrisponde all'arena simulata dall'emulatore. I robot vengono posizionati correttamente sul piano dell'arena, i numerosi calcoli fra matrici, molto dispendiosi, non influenzano la fluidità del sistema aumentato e la comunicazione non ha un impatto significativo su quest'ultimo. Tutti gli studi sono stati effettuati sulla macchina locale, nel caso in cui l'applicazione venga eseguita in remoto, ovvero broker e server web non vengono eseguiti sulla stessa macchina, le traslazioni potrebbero subire un disallineamento temporale, creando un movimento non più lineare.
+\\
 % =============
 % LAVORI FUTURI
 % =============
-Partendo da questo progetto è possibile integrarlo con le seguenti funzionalità:
+Questo progetto, con le limitazioni attuali, potrebbe essere utilizzato come risorsa per un nuovo sistema completamente ristrutturato, oppure fornire una base di partenza per uno prossimo sviluppo. In questo caso, le possibili funzionalità critiche da integrare sono le seguenti:
 \begin{itemize}
-    \item Un'implementazione più robusta e stabile del rilevatore di marker AruCo assieme ad un sistema migliorato per stimarne la posizione in una scena 3D. Oppure integrare dei meccanismi di riconoscimento di un piano per poter diminuire l'errore delle stime calcolate.
-    \item Implementare un sistema capace definire in autonomia la locazione spaziale dei corner appartenenti all'arena, attualmente definiti arbitrariamente.
-    \item Migliorare il sistema di rendering in modo da diminuire il numero di draw call velocizzando i tempi di render.
-    \item Permettere all'utente di modificare dei parametri, come l'area dell'arena simualta o la dimensione dei marker reali, prima di inizializzare la sessione in realtà aumentata.
+    \item un'implementazione più robusta e stabile del rilevatore di marker AruCo assieme ad un sistema migliorato per stimarne la posizione in una scena 3D. Oppure integrare dei meccanismi di riconoscimento di un piano per poter diminuire l'errore delle stime calcolate;
+    \item implementare un sistema capace definire in autonomia la locazione spaziale dei corner appartenenti all'arena, attualmente definiti arbitrariamente;
+    \item migliorare il sistema di rendering in modo da diminuire il numero di draw call velocizzando i tempi di render;
+    \item permettere all'utente di modificare dei parametri, come l'area dell'arena simualta o la dimensione dei marker reali, prima di inizializzare la sessione in realtà aumentata.
 \end{itemize}
 % chapter Conclusioni e lavori futuri (end)
 
