@@ -11,7 +11,7 @@ async function init() {
     // enable webxr support
     renderer.xr.enabled = true;
 
-    // add helper button to initialize an XSession with the given features
+    // add helper button to initialize an XRSession with the given features
     document.body.appendChild(ARButton.createButton(renderer, {
         requiredFeatures: reqFeats,
         optionalFeatures: ["dom-overlay"],

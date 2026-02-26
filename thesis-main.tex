@@ -49,8 +49,11 @@
 \frontmatter\frontispiece
 %
 \begin{abstract}	
-Max 2000 characters, strict.
-\ac{js}
+La realtà aumentata rappresenta uno strumento efficace per integrare contenuti digitali all’interno dell’ambiente fisico, consentendo nuove modalità di interazione e visualizzazione dei dati.
+In questo contesto, la presente tesi descrive lo sviluppo di un’applicazione web di realtà aumentata finalizzata alla sovrapposizione di robot simulati a robot reali o simulati.
+L’obiettivo del lavoro è di progettare e implementare un sistema capace di acquisire in tempo reale le posizioni dei robot appartenenti ad uno sciame robotico, gestito dal framework Scala Fields (ScaFi), basato sui principi dell’Aggregate Computing (AC), e renderizzarle all’interno di una scena aumentata accessibile tramite browser e dispositivi dotati di webcam. L’applicazione integra ThreeJs e WebXR per la gestione della scena tridimensionale e delle funzionalità AR.
+La procedura prevede una fase iniziale di calibrazione dell’arena virtuale mediante il riconoscimento di marker ArUco, inquadrati dalla fotocamera, al fine di allineare correttamente sistema di riferimento reale e digitale. I dati dei robot, trasmessi tramite protocollo MQTT, vengono quindi trasformati dal sistema di coordinate del simulatore a quello dell’arena virtuale, applicando le opportune trasformazioni geometriche per garantire coerenza spaziale.
+Il contributo principale consiste nella progettazione del modulo di integrazione in realtà aumentata e nella definizione della pipeline di trasformazione e sincronizzazione dei dati. Il sistema è stato validato attraverso test sperimentali, volti a valutare l’accuratezza del posizionamento e ad analizzare le principali fonti di errore, dimostrando la validità e l’efficacia dell’approccio proposto.
 \end{abstract}
 %
 %----------------------------------------------------------------------------------------
@@ -236,14 +239,20 @@ Una volta individuati e calcolata una stima della loro posizione all'interno di 
 % section Requisiti (end)
 %
 \section{Modello}\label{sec:modello} % (fold)
-In questo progetto viene implementato un sistema di riconoscimento di marker ArUco con l'ausilio di una telecamera. Il tutto integrato in un contesto di realtà aumentata, fornendo una rappresentazione più immersiva dell'emulatore.
-In \Cref{fig:diag-arch} viene mostrata l'architettura generale del sistema.
+In questo progetto viene implementato un sistema di riconoscimento di marker ArUco con l'ausilio di una telecamera. Il tutto integrato in un contesto di realtà aumentata, fornendo una rappresentazione più immersiva dell'emulatore. L'architettura del sistema viene illustrata in \Cref{fig:system-arch}, segue in \Cref{fig:diag-arch} il diagramma delle classi generale.
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=\linewidth]{./figures/diag-arch.png}
+    \includegraphics[width=.8\linewidth]{./figures/system-arch.png}
+    \caption{Architettura del sistema}
+    \label{fig:system-arch}
+\end{figure}
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=.8\linewidth]{./figures/diag-arch.png}
     \caption{Diagramma delle classi del sistema}
     \label{fig:diag-arch}
 \end{figure}
+\\
 Nello specifico l'utente, nel momento in cui inizializza la sessione aumentata, approvando i permessi necessari, ha la possibilità di utilizzare la fotocamera esterna del dispositivo con lo scopo di inquadrare esattamente quattro marker ArUco.
 Una volta rilevati i marker viene realizzata, ed eventualmente calibrata, un'arena virtuale dove verranno rappresentati, nella scena 3D, i robot emulati dal sistema robot-emulation.
 I due sistemi comunicano attraverso \ac{mqtt}, con l'obiettivo di condividere le informazioni che riguardano i robot simulati dall'emulatore con l'arena virtuale, per poter renderizzare i robot in realtà aumentata.
@@ -302,28 +311,12 @@ La soluzione implementata si sottoscrive ai relativi topic e al momento della ri
 Uno dei problemi principali analizzati riguarda la differenza di sistema di coordinate di entrambe le arene: l'arena simulata non corrisponde all'arena virtuale nella scena, quindi una posizione nel sistema simulato, se utilizzata all'interno della scena senza alcuna manipolazione, comporta a posizionamenti errati all'interno della scena.
 Il posizionamento dei robot deve essere effettuato all'interno di un'area precisamente delimitata nella scena, nasce la necessità di adattare le posizioni relative ricevute nel sistema di coordinate corrente.
 Oltre a questa trasformazione, si aggrega la trasformazione dalle coordinate relative all'arena al \ac{wcs}.
-% subsection Arena (end)
-%
-% \subsection{WebXR e HTTPS}\label{sub:webxr_e_https} % (fold)
-% % subsection WebXR e HTTPS (end)
-%
-% \subsection{Broker MQTT}\label{sub:broker_mqtt} % (fold)
-% La comunicazione con il sistema emulato è un'aspetto fondamentale per lo sviluppo di questo progetto. Il broker \ac{mqtt} costituisce il nodo centrale della comunicazione, consentendo lo scambio in tempo reale di dati, comandi e stati tra i diversi componenti.
-% Tale architettura garantisce la sincronizzazione fra i due sistemi senza richiedere connessioni dirette tra ogni modulo, semplificando la gestione del sistema e favorendo l’integrazione di ulteriori componenti.
-% \\
-% Grazie ad \ac{mqtt}, la soluzione proposta è facilmente integrabile al sistema reale con i dispositivi fisici. Nel progetto Project-Emerge il sistema interagisce con il broker come publisher, inviando i dati relativi alle posizioni dei robot nel tempo, mentre in questo progetto la comunicazione si concentra nella ricezione e nell'elaborazione dei dati ricevuti.
-% %
-% % subsection Broker MQTT (end)
 %
 % section Modello (end)
 %
 % chapter Analisi (end)
 %
 \chapter{Progettazione}\label{chap:progettazione} % (fold)
-%
-\section{ThreeJS e WebXR}\label{sec:threejs_e_webxr} % (fold)
-%
-% section ThreeJS e WebXR (end)
 %
 \section{Marker Detection e Pose Estimation}\label{sec:marker_detection_e_pose_estimation} % (fold)
 %
@@ -508,7 +501,7 @@ Dal \Cref{lst:find-markers} si nota che il riconoscimento, come l'acquisizione d
 \subsection{Stima delle posizioni}\label{sub:impl_stima_delle_posizioni} % (fold)
 La stima delle posizioni viene calcolata sfruttando la libreria posit2, fornita da js-aruco2.
 La quale all'interno calibra una telecamera virtuale, conoscendo la larghezza dell'elemento \textit{HTML} dove viene renderizzata la scena e la grandezza dei marker ArUco reali, per poter trasformare le coordinate nello spazio dello schermo in coordinate della scena.
-Per poter ottenere dei risultati attendibili, è necessario centrare le coordinate 2D dei corner trovati nella sezione \cref{sub:impl_ricerca_dei_marker}, all'interno del canvas.
+Per poter ottenere dei risultati attendibili, è necessario centrare le coordinate 2D dei corner trovati nella \cref{sub:impl_ricerca_dei_marker}, all'interno del canvas.
 %
 \lstinputlisting[language=JavaScript,caption={Stima delle posizioni dei marker in uno spazio 3D},label={lst:estimate-marker-pos}]{./listings/estimate-position.js}
 Vengono tracciati tutti i marker, con \texttt{Id} unico, che successivamente, dopo le opportune manipolazioni, verranno utilizzati per la creazione dell'arena virtuale.
