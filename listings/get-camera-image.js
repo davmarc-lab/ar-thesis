@@ -1,5 +1,7 @@
+const DETECT_FRAMES = 100;
+
 function update(time) {
-    if (renderer.info.render.frame % 100 == 0 && !calibrated) {
+    if (renderer.info.render.frame % DETECT_FRAMES == 0 && !calibrated) {
         const image = getCameraImage();
         if (!image) return;
     }

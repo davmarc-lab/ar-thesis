@@ -6,6 +6,7 @@ const opts = {
     protocol: "wss",
     clean: true,
     connectTimeout: 4000,
+    reconnectPeriod: 2000,
     rejectUnauthorized: true
 }
 

@@ -4,7 +4,7 @@ function snapshot(renderer, camera, scene) {
     // create render target
     const rt = new THREE.WebGLRenderTarget(width, height);
 
-    // retrieve current render buffer
+    // retrieve current render target
     const oldRt = renderer.getRenderTarget();
     renderer.setRenderTarget(rt);
     renderer.render(scene, camera);

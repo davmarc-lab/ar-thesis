@@ -502,6 +502,7 @@ Il metodo \texttt{flipImageVertically} analizza metà dell'immagine, partendo da
 %
 Una volta ottenuta l'immagine viene processata da js-aruco2, ottenendo le posizioni dei marker in coordinate 2D.
 \lstinputlisting[language=JavaScript,caption={Ricerca dei marker ArUco},label={lst:find-markers}]{./listings/find-markers.js}
+Dal \Cref{lst:find-markers} si nota che il riconoscimento, come l'acquisizione dell'immagine, viene effettuato soltanto dopo l'esecuzione di un preciso numero di frame. Questo perchè, come viene spiegato nel capitolo successivo, le fasi di riconoscimento e di stima delle posizioni, sono molto dispendiose a livello di risorse. Per questo motivo non viene implementato un riconoscimento in tempo reale. Tuttavia, per fornire maggiore flessibilità, viene fornita all'utente la possibilità di ricalibrare l'arena in qualsiasi momento, mediante l'utilizzo di un'interfaccia grafica dedicata. Quando la ricalibrazione viene effettuata, l'arena virtuale precedente viene temporaneamente mantenuta attiva, fino al momento in cui vengono tracciati i nuvoi marker. Segue la ricreazione dell'arena e la riacquisizione delle informazioni iniziali ed alla ricalibrazione del sistema.
 % subsection Ricerca dei marker (end)
 
 \subsection{Stima delle posizioni}\label{sub:impl_stima_delle_posizioni} % (fold)
@@ -562,7 +563,7 @@ Dove $xSize$ e $ySize$ rappresentano rispettivamente la metà della lunghezza di
 All'interno del \cref{lst:broker-message} sopra mostrato, si nota come vengono definite le operazioni da eseguire quando viene ricevuto un messaggio: ogni volta che il client riceve un messaggio emette il segnale \texttt{message}, mentre nel programma principale vengono definite le istruzioni da eseguire ogni volta che il segnale viene emesso.
 %
 % subsection Comunicazione con il broker (end)
-
+%
 \subsection{Posizionamento e orientamento}\label{sub:posizionamento_e_orientamento} % (fold)
 A questo punto viene calcolata la matrice di trasformazione per poter allineare la mesh con il piano dell'arena. Si calcolano le matrici di trasformazione sia iniziale, della mesh, che finale, corrispondente al piano dell'arena.
 Nel sistema di coordinate della mesh, il vettore normale del robot corrisponde all'asse delle $y$ avente verso opposto, per questo motivo, nella matrice di trasformazione finale, \texttt{tb}, vengono scambiati l'asse $z$ e l'asse $y$. Infatti la base della mesh deve posizionarsi nella stessa direzione della normale dell'arena (asse $z$). Inoltre lo stesso asse $z$ viene negato per permettere alla base di posizionarsi correttamente.
@@ -625,7 +626,7 @@ La fase di riconoscimento di marker all'interno di un'immagine, stima delle posi
     \caption{Tempi di esecuzione per ricercare i marker in un immagine}
     \label{fig:detect-aruco}
 \end{figure}
-Segue la necessità di non utilizzare un costante riconoscimento delle immagini ma, vengono limitate il numero di volte che viene eseguito al secondo.
+Segue la necessità di non utilizzare un costante riconoscimento delle immagini ma, vengono limitate il numero di volte che viene eseguito al secondo, integrando un sistema di ricalibrazione manuale da poter effettuare in qualsiasi momento.
 % subsubsection Prestazioni del riconoscimento (end)
 %
 % section Stabilità del rilevamento dei marker (end)
@@ -665,22 +666,67 @@ Per avvisare l'utente in queste situazioni critiche, come mostrato nella \Cref{f
 % section Gestione delle comunicazioni (end)
 \section{Gestione dell'arena virtuale}\label{sec:gestione_dell_arena_virtuale} % (fold)
 Il sistema dell'arena virtuale ha soddisfatto pienamente i requisiti proposti. Le fasi di calcolo dell'origine e degli assi sono accurate, garantendo un movimento realistico.
-Tuttavia l'immersività della scena, ovvero l'accuratezza del posizionamento dell'arena nel mondo aumentato, dipende dalla fase di riconoscimento e posizionamento dei marker all'interno della scena.
-Nei test eseguiti i limiti dell'arena vengono rappresentati come cubi all'interno della scena.
+Tuttavia l'immersività della scena, ovvero l'accuratezza del posizionamento dell'arena nel mondo aumentato, dipende dalla fase di riconoscimento e posizionamento dei marker all'interno della scena. Nella \Cref{fig:arena-example} è possibile notare come la sovrapposizione degli angoli dell'arena e dei marker non sia perfetta, a causa dei fenomeni illustrati nella \Cref{sec:analisi_dell_errore_di_rilevamento}.
+\\
+Nei test eseguiti i limiti dell'arena vengono rappresentati come cubi all'interno della scena, ai quali vengono aggiunti gli assi del sistema di coordinate locale per mostrare la rotazione dovuta alla proiezione della fotocamera.
+Le immagini sono state catturate tramite un dispositivo mobile dotato di fotocamera e sensori aggiuntivi, con lo scopo di fornire una misurazione dell'orientamento della fotocamera molto più accurato. Così facendo è possibile che si verifichino delle situazioni dove questi sensori creano disturbi, ad esempio quando il dispositivo è perfettamente orizzontale puntando il pavimento, portando ad un'inconsistenza nei dati alterando il risultato finale.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=.7\linewidth]{./figures/snap/arena-calibration-big.png}
+    \caption{Esempio di arena virtuale delimitata dai marker}
+    \label{fig:arena-example}
+\end{figure}
+\paragraph{Allineamento della mesh}\label{par:allineamento_della_mesh} % (fold)
+L'allineamento della mesh viene eseguito in maniera dinamica, utilizzando sia la matrice di trasformazione statica di una mesh dei robot, che la matrice di trasformazione dinamica dell'arena virtuale.
+Come spiegato nella \Cref{sub:posizionamento_e_orientamento_dei_robot}, si calcola la matrice di rotazione che permtette di posizionarli sul piano dell'arena, mostrato in \Cref{fig:arena-robot-pose}.
+Vengono ottenuti dei risultati molto attendibili e sempre coerenti con la realtà, dunque è possibile affermare di aver soddisfatto il requisito dell'allineamento.
+\begin{figure}[htp]
+        \centering
+        \includegraphics[width=.6\linewidth]{./figures/snap/single-robot.png}
+        \caption{Dimostrazione dell'allineamento della mesh dei robot}
+        \label{fig:arena-robot-pose}
+\end{figure}
+%
+% paragraph Allineamento della mesh (end)
+%
+\paragraph{Rappresentazione dei robot emulati}\label{par:rappresentazione_dei_robot_emulati} % (fold)
+Nelle figure sotto mostrate è possibile notare il posizionamento dei robot emulati. In particolare l'applicativo riceve correttamente le posizioni inziali, situazione risultante in \Cref{fig:arena-robot-position}, ed istanzia correttamente il numero delle entità simulate, in questo caso specifico sono stati emulati esattamente $5$ robot.
+\begin{figure}[htp]
+    \centering
+    \begin{subfigure}{.45\linewidth}
+        \includegraphics[width=\linewidth]{./figures/snap/initial-positions.png}
+        \caption{Posizionamento di alcuni robot all'interno dell'arena}
+        \label{fig:arena-robot-position}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{./figures/snap/moved-robots.png}
+        \caption{Movimento di tutti i robot all'interno dell'arena}
+        \label{fig:arena-robot-moved}
+    \end{subfigure}
+\end{figure}
+Successivamente, in un'istante di tempo diverso, uno script Python invia comandi specifici all'emulatore iniziando così a gestire il movimento dei robot, e ad aggiornare costantemente i topic \ac{mqtt}.
+Il sistema, ad ogni messaggio ricevuto, aggiorna la posizione del robot virtuale, effettuando le opportune trasformazioni delle coordinate, come spiegato nella \Cref{sub:movimento_dei_robot} ed implementato nella \Cref{sub:impl_movimento_dei_robot}.
+Dopo qualche secondo si ottiene il risultato illustrato in  \Cref{fig:arena-robot-moved}.
+% paragraph Rappresentazione dei robot emulati (end)
+\\
+\\
+Da queste due ultime considerazioni si può affermare di aver raggiunto gli obiettivi prestabiliti all'inizio dello sviluppo del progetto, tuttavia con qualche limitazione. I diversi sistemi comunicano fra loro e possono coesistere nello stesso momento senza interferire l'uno con l'altro.
 %
 % section Gestione dell'arena virtuale (end)
 \section{Stabilità del sistema}\label{sec:stabilita_del_sistema} % (fold)
 In questo paragrafo viene analizzata la stabilità dell'applicativo analizzando le prestazioni gestendo numerosi robot nello stesso momento.
-Vengono presi in cosiderazione i tempi impiegati sia per renderizzare tutti i robot, sia il tempo impiegato ad aggiornare tutte le posizioni. Sono stati implementati degli script in Python che permettono di inviare dei mesassaggi al broker, che verranno elaborati dall'emulatore per spostare i robot nel mondo emulato.
-\\
-In \Cref{fig:render-times} viene riportato il grafico che mostra l'analisi dei tempi di esecuzione durante la fase di rendering in una scena statica. L'esecuzione rimane fluida fino al raggiungimento di circa $50$ robot nello stesso momento.
-Il tempo impiegato non solo dipende dalla qualità della mesh utilizzata, ma soprattutto dal numero elevato di \textit{draw call} che ThreeJS deve effettuare ogni frame.
+Vengono presi in cosiderazione i tempi impiegati sia per renderizzare tutti i robot, sia il tempo impiegato ad aggiornare tutte le posizioni.
+Sono stati implementati degli script in Python che permettono di inviare dei mesassaggi al broker, che verranno elaborati dall'emulatore per spostare i robot nel mondo emulato.
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=.8\linewidth]{./figures/render-times.png}
-    \caption{Grafico dei tempi di render senza movimento}
+    \includegraphics[width=.7\linewidth]{./figures/render-times.png}
+    \caption{Grafico dei tempi di render della scena}
     \label{fig:render-times}
 \end{figure}
+In \Cref{fig:render-times} viene riportato il grafico che mostra l'analisi dei tempi di esecuzione durante la fase di rendering in una scena statica. L'esecuzione rimane fluida fino al raggiungimento di circa $50$ robot nello stesso momento.
+Il tempo impiegato non solo dipende dalla qualità della mesh utilizzata, ma soprattutto dal numero elevato di \textit{draw call} che ThreeJS deve effettuare ogni frame.
 \subsubsection{Impatto della comunicazione}\label{sec:impatto_della_comunicazione} % (fold)
 Per analizzare i tempi di ricezione ed elaborazione dei messaggi sono stati effettuati dei test con un numero elevato di robot simulati, nonostante ciò il tempo di esecuzione rimaneva molto basso, senza influenzare le prestazioni del sistema.
 Lo stesso vale durante la fase di movimento dei robot: siccome le operazioni da eseguire sono le stesse, queste non influenzano il normale funzionamento dell'applicativo.

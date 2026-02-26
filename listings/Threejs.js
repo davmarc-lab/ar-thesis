@@ -32,8 +32,8 @@ document.body.appendChild(renderer.domElement);
 renderer.setAnimationLoop(animate);
 function animate(time) {
     // operazioni sulle mesh ad ogni frame
-	mesh.rotation.x = time / 1000;
-	mesh.rotation.y = time / 1000;
+    mesh.rotation.x = time / 1000;
+    mesh.rotation.y = time / 1000;
     // render della scena nel canvas
-	renderer.render(scene, camera);
+    renderer.render(scene, camera);
 }

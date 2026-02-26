@@ -1,5 +1,14 @@
 async function createArena(bestValues = true) {
     ...
+    // clear arena corners if already exist
+    if (arena) {
+        // remove arena system from the scene
+        const arenaObj = arena.getArena();
+        scene.remove(arenaObj);
+        // clear arena corners
+        arena.clearCorners();
+    }
+
     arena = new Arena(corners, simWorldSize);
     arena.createCasters();
     // add the arena 3d virtual object to the scene

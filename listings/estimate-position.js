@@ -1,5 +1,5 @@
 function update(time) {
-    if (renderer.info.render.frame % 100 == 0 && !calibrated) {
+    if (renderer.info.render.frame % DETECT_FRAMES == 0 && !calibrated) {
         ...
         const markers = detectMarkers(image);
         trackMarkers(markers);
