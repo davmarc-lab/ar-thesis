@@ -54,13 +54,13 @@ Max 2000 characters, strict.
 \end{abstract}
 %
 %----------------------------------------------------------------------------------------
-\tableofcontents   
-\listoffigures     % (optional) comment if empty
-\lstlistoflistings % (optional) comment if empty
+\tableofcontents
+\listoffigures
+\lstlistoflistings
 %----------------------------------------------------------------------------------------
-
+%
 \mainmatter
-
+%
 %----------------------------------------------------------------------------------------
 \chapter{Introduzione}\label{chap:introduzione}
 %----------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ Tecniche come il \textit{marker-based} tracking, il \textit{markerless} tracking
 Dal punto di vista concettuale, un sistema può essere definito di realtà aumentata se soddisfa tre requisiti fondamentali: combinazione di elementi reali e virtuali, interattività in tempo reale e corretta registrazione spaziale tra oggetti digitali e ambiente fisico.
 Tali caratteristiche rendono l’AR una tecnologia abilitante nell’ambito dell’interazione uomo-macchina, contribuendo allo sviluppo di interfacce sempre più immersive e contestualizzate.
 % section Realtà aumentata (end)
-
+%
 \section{ThreeJS}\label{sec:threejs} % (fold)
 ThreeJS è una libreria in JavaScript progettata per semplificare lo sviluppo di applicazioni di grafica tridimensionale in ambienti web. Si basa su WebGL, un’\ac{api} a basso livello che consente l’accesso diretto alle funzionalità della GPU attraverso il browser.
 L’utilizzo diretto di WebGL richiede una conoscenza approfondita della pipeline grafica e della programmazione tramite shader, per questo motivo ThreeJS introduce un livello di astrazione che consente di sviluppare scene tridimensionali complesse riducendo la complessità implementativa, pur mantenendo un elevato grado di flessibilità.
@@ -291,8 +291,6 @@ Inolre utilizzano la stessa mesh con la stessa dimensione, ma rotazione e trasla
 % subsection Robot (end)
 %
 \subsection{Arena}\label{sub:arena} % (fold)
-ASHJDGASJHGDJAHJAGHSDJHGJHADSJHGAGHSJADGJGJHASDGJHGHASDGJH
-\\
 L'arena simulata riproduce il comportamento dei robot all'interno del mondo reale, comunicando con il sistema principale mediante un broker \ac{mqtt}. Questa simulazione pubblica tutte le informazioni relative alle posizioni ed orientamento all'interno di un topic.
 \begin{figure}[htp]
     \centering
